@@ -1,68 +1,72 @@
-2021-07-08 15:06:12 INFO::Writing function arguments to log file
-2021-07-08 15:06:12 DEBUG::Function arguments
-2021-07-08 15:06:12 DEBUG::Output folder: maaslin2_out/ASV_relab_v2_gut_cestode_present
-2021-07-08 15:06:12 DEBUG::Min Abundance: 0.000000
-2021-07-08 15:06:12 DEBUG::Min Prevalence: 0.100000
-2021-07-08 15:06:12 DEBUG::Normalization: NONE
-2021-07-08 15:06:12 DEBUG::Transform: NONE
-2021-07-08 15:06:12 DEBUG::Analysis method: LM
-2021-07-08 15:06:12 DEBUG::Max significance: 0.250000
-2021-07-08 15:06:12 DEBUG::Random effects: Sampling.Date
-2021-07-08 15:06:12 DEBUG::Fixed effects: Cestode.present,Feed.Type,Sex,Size.class
-2021-07-08 15:06:12 DEBUG::Correction method: BH
-2021-07-08 15:06:12 DEBUG::Standardize: TRUE
-2021-07-08 15:06:12 DEBUG::Cores: 1
-2021-07-08 15:06:12 INFO::Verifying options selected are valid
-2021-07-08 15:06:12 INFO::Determining format of input files
-2021-07-08 15:06:12 INFO::Input format is data samples as rows and metadata samples as rows
-2021-07-08 15:06:12 DEBUG::A total of 30 samples were found in both the data and metadata
-2021-07-08 15:06:12 DEBUG::Reordering data/metadata to use same sample ordering
-2021-07-08 15:06:12 INFO::Formula for random effects: expr ~ (1 | Sampling.Date)
-2021-07-08 15:06:12 INFO::Formula for fixed effects: expr ~  Cestode.present + Feed.Type + Sex + Size.class
-2021-07-08 15:06:12 INFO::Running selected normalization method: NONE
-2021-07-08 15:06:12 INFO::Filter data based on min abundance and min prevalence
-2021-07-08 15:06:12 INFO::Total samples in data: 30
-2021-07-08 15:06:12 INFO::Min samples required with min abundance for a feature not to be filtered: 3.000000
-2021-07-08 15:06:12 INFO::Total filtered features: 84
-2021-07-08 15:06:12 INFO::Filtered feature names: seq9, seq15, seq18, seq21, seq23, seq24, seq34, seq35, seq40, seq42, seq48, seq51, seq53, seq54, seq55, seq57, seq58, seq60, seq61, seq70, seq71, seq73, seq77, seq81, seq82, seq83, seq85, seq87, seq89, seq91, seq94, seq96, seq98, seq101, seq102, seq103, seq105, seq114, seq117, seq121, seq124, seq127, seq128, seq129, seq131, seq136, seq139, seq142, seq155, seq156, seq160, seq167, seq170, seq177, seq182, seq186, seq196, seq199, seq213, seq223, seq224, seq229, seq230, seq240, seq248, seq289, seq292, seq315, seq327, seq340, seq342, seq352, seq361, seq363, seq370, seq402, seq429, seq445, seq461, seq490, seq520, seq528, seq565, seq817
-2021-07-08 15:06:12 INFO::Applying z-score to standardize continuous metadata
-2021-07-08 15:06:12 INFO::Running selected transform method: NONE
-2021-07-08 15:06:12 INFO::Running selected analysis method: LM
-2021-07-08 15:06:12 INFO::Fitting model to feature number 1, seq1
-2021-07-08 15:06:12 INFO::Fitting model to feature number 2, seq2
-2021-07-08 15:06:12 INFO::Fitting model to feature number 3, seq3
-2021-07-08 15:06:12 INFO::Fitting model to feature number 4, seq5
-2021-07-08 15:06:12 INFO::Fitting model to feature number 5, seq6
-2021-07-08 15:06:12 INFO::Fitting model to feature number 6, seq7
-2021-07-08 15:06:12 INFO::Fitting model to feature number 7, seq8
-2021-07-08 15:06:12 INFO::Fitting model to feature number 8, seq10
-2021-07-08 15:06:12 INFO::Fitting model to feature number 9, seq14
-2021-07-08 15:06:12 INFO::Fitting model to feature number 10, seq16
-2021-07-08 15:06:12 INFO::Fitting model to feature number 11, seq19
-2021-07-08 15:06:12 INFO::Fitting model to feature number 12, seq20
-2021-07-08 15:06:12 INFO::Fitting model to feature number 13, seq25
-2021-07-08 15:06:12 INFO::Fitting model to feature number 14, seq26
-2021-07-08 15:06:13 INFO::Fitting model to feature number 15, seq29
-2021-07-08 15:06:13 INFO::Fitting model to feature number 16, seq32
-2021-07-08 15:06:13 INFO::Fitting model to feature number 17, seq36
-2021-07-08 15:06:13 INFO::Fitting model to feature number 18, seq38
-2021-07-08 15:06:13 INFO::Fitting model to feature number 19, seq41
-2021-07-08 15:06:13 INFO::Fitting model to feature number 20, seq43
-2021-07-08 15:06:13 INFO::Fitting model to feature number 21, seq44
-2021-07-08 15:06:13 INFO::Fitting model to feature number 22, seq49
-2021-07-08 15:06:13 INFO::Fitting model to feature number 23, seq52
-2021-07-08 15:06:13 INFO::Fitting model to feature number 24, seq56
-2021-07-08 15:06:13 INFO::Fitting model to feature number 25, seq64
-2021-07-08 15:06:13 INFO::Fitting model to feature number 26, seq66
-2021-07-08 15:06:13 INFO::Fitting model to feature number 27, seq69
-2021-07-08 15:06:14 INFO::Fitting model to feature number 28, seq74
-2021-07-08 15:06:14 INFO::Fitting model to feature number 29, seq75
-2021-07-08 15:06:14 INFO::Fitting model to feature number 30, seq79
-2021-07-08 15:06:14 INFO::Fitting model to feature number 31, seq84
-2021-07-08 15:06:14 INFO::Fitting model to feature number 32, seq86
-2021-07-08 15:06:14 INFO::Counting total values for each feature
-2021-07-08 15:06:14 INFO::Writing residuals to file maaslin2_out/ASV_relab_v2_gut_cestode_present/residuals.rds
-2021-07-08 15:06:14 INFO::Writing all results to file (ordered by increasing q-values): maaslin2_out/ASV_relab_v2_gut_cestode_present/all_results.tsv
-2021-07-08 15:06:14 INFO::Writing the significant results (those which are less than or equal to the threshold of 0.250000 ) to file (ordered by increasing q-values): maaslin2_out/ASV_relab_v2_gut_cestode_present/significant_results.tsv
-2021-07-08 15:06:14 INFO::Writing heatmap of significant results to file: maaslin2_out/ASV_relab_v2_gut_cestode_present/heatmap.pdf
-2021-07-08 15:06:14 INFO::Writing association plots (one for each significant association) to output folder: maaslin2_out/ASV_relab_v2_gut_cestode_present
+2022-02-14 15:01:42 INFO::Writing function arguments to log file
+2022-02-14 15:01:42 DEBUG::Function arguments
+2022-02-14 15:01:42 DEBUG::Output folder: maaslin2_out/ASV_relab_v2_gut_cestode_present
+2022-02-14 15:01:42 DEBUG::Min Abundance: 0.000000
+2022-02-14 15:01:42 DEBUG::Min Prevalence: 0.100000
+2022-02-14 15:01:42 DEBUG::Normalization: NONE
+2022-02-14 15:01:42 DEBUG::Transform: NONE
+2022-02-14 15:01:42 DEBUG::Analysis method: LM
+2022-02-14 15:01:42 DEBUG::Max significance: 0.250000
+2022-02-14 15:01:42 DEBUG::Random effects: Sampling.Date
+2022-02-14 15:01:42 DEBUG::Fixed effects: Cestode.present,Feed.Type,Sex,Size.class
+2022-02-14 15:01:42 DEBUG::Correction method: BH
+2022-02-14 15:01:42 DEBUG::Standardize: TRUE
+2022-02-14 15:01:42 DEBUG::Cores: 1
+2022-02-14 15:01:42 INFO::Verifying options selected are valid
+2022-02-14 15:01:42 INFO::Determining format of input files
+2022-02-14 15:01:42 INFO::Input format is data samples as rows and metadata samples as rows
+2022-02-14 15:01:42 DEBUG::A total of 30 samples were found in both the data and metadata
+2022-02-14 15:01:42 DEBUG::Reordering data/metadata to use same sample ordering
+2022-02-14 15:01:42 INFO::Formula for random effects: expr ~ (1 | Sampling.Date)
+2022-02-14 15:01:43 INFO::Formula for fixed effects: expr ~  Cestode.present + Feed.Type + Sex + Size.class
+2022-02-14 15:01:43 INFO::Filter data based on min abundance and min prevalence
+2022-02-14 15:01:43 INFO::Total samples in data: 30
+2022-02-14 15:01:43 INFO::Min samples required with min abundance for a feature not to be filtered: 3.000000
+2022-02-14 15:01:43 INFO::Total filtered features: 84
+2022-02-14 15:01:43 INFO::Filtered feature names from abundance and prevalence filtering: seq9, seq15, seq18, seq21, seq23, seq24, seq34, seq35, seq40, seq42, seq48, seq51, seq53, seq54, seq55, seq57, seq58, seq60, seq61, seq70, seq71, seq73, seq77, seq81, seq82, seq83, seq85, seq87, seq89, seq91, seq94, seq96, seq98, seq101, seq102, seq103, seq105, seq114, seq117, seq121, seq124, seq127, seq128, seq129, seq131, seq136, seq139, seq142, seq155, seq156, seq160, seq167, seq170, seq177, seq182, seq186, seq196, seq199, seq213, seq223, seq224, seq229, seq230, seq240, seq248, seq289, seq292, seq315, seq327, seq340, seq342, seq352, seq361, seq363, seq370, seq402, seq429, seq445, seq461, seq490, seq520, seq528, seq565, seq817
+2022-02-14 15:01:43 INFO::Total filtered features with variance filtering: 0
+2022-02-14 15:01:43 INFO::Filtered feature names from variance filtering:
+2022-02-14 15:01:43 INFO::Running selected normalization method: NONE
+2022-02-14 15:01:43 INFO::Applying z-score to standardize continuous metadata
+2022-02-14 15:01:43 INFO::Running selected transform method: NONE
+2022-02-14 15:01:43 INFO::Running selected analysis method: LM
+2022-02-14 15:01:43 INFO::Fitting model to feature number 1, seq1
+2022-02-14 15:01:43 INFO::Fitting model to feature number 2, seq2
+2022-02-14 15:01:43 INFO::Fitting model to feature number 3, seq3
+2022-02-14 15:01:43 INFO::Fitting model to feature number 4, seq5
+2022-02-14 15:01:43 INFO::Fitting model to feature number 5, seq6
+2022-02-14 15:01:43 INFO::Fitting model to feature number 6, seq7
+2022-02-14 15:01:43 INFO::Fitting model to feature number 7, seq8
+2022-02-14 15:01:43 INFO::Fitting model to feature number 8, seq10
+2022-02-14 15:01:43 INFO::Fitting model to feature number 9, seq14
+2022-02-14 15:01:43 INFO::Fitting model to feature number 10, seq16
+2022-02-14 15:01:43 INFO::Fitting model to feature number 11, seq19
+2022-02-14 15:01:43 INFO::Fitting model to feature number 12, seq20
+2022-02-14 15:01:43 INFO::Fitting model to feature number 13, seq25
+2022-02-14 15:01:43 INFO::Fitting model to feature number 14, seq26
+2022-02-14 15:01:43 INFO::Fitting model to feature number 15, seq29
+2022-02-14 15:01:43 INFO::Fitting model to feature number 16, seq32
+2022-02-14 15:01:44 INFO::Fitting model to feature number 17, seq36
+2022-02-14 15:01:44 INFO::Fitting model to feature number 18, seq38
+2022-02-14 15:01:44 INFO::Fitting model to feature number 19, seq41
+2022-02-14 15:01:44 INFO::Fitting model to feature number 20, seq43
+2022-02-14 15:01:44 INFO::Fitting model to feature number 21, seq44
+2022-02-14 15:01:44 INFO::Fitting model to feature number 22, seq49
+2022-02-14 15:01:44 INFO::Fitting model to feature number 23, seq52
+2022-02-14 15:01:44 INFO::Fitting model to feature number 24, seq56
+2022-02-14 15:01:44 INFO::Fitting model to feature number 25, seq64
+2022-02-14 15:01:44 INFO::Fitting model to feature number 26, seq66
+2022-02-14 15:01:44 INFO::Fitting model to feature number 27, seq69
+2022-02-14 15:01:44 INFO::Fitting model to feature number 28, seq74
+2022-02-14 15:01:44 INFO::Fitting model to feature number 29, seq75
+2022-02-14 15:01:44 INFO::Fitting model to feature number 30, seq79
+2022-02-14 15:01:45 INFO::Fitting model to feature number 31, seq84
+2022-02-14 15:01:45 INFO::Fitting model to feature number 32, seq86
+2022-02-14 15:01:45 INFO::Counting total values for each feature
+2022-02-14 15:01:45 INFO::Writing residuals to file maaslin2_out/ASV_relab_v2_gut_cestode_present/residuals.rds
+2022-02-14 15:01:45 INFO::Writing fitted values to file maaslin2_out/ASV_relab_v2_gut_cestode_present/fitted.rds
+2022-02-14 15:01:45 INFO::Writing extracted random effects to file maaslin2_out/ASV_relab_v2_gut_cestode_present/ranef.rds
+2022-02-14 15:01:45 INFO::Writing all results to file (ordered by increasing q-values): maaslin2_out/ASV_relab_v2_gut_cestode_present/all_results.tsv
+2022-02-14 15:01:45 INFO::Writing the significant results (those which are less than or equal to the threshold of 0.250000 ) to file (ordered by increasing q-values): maaslin2_out/ASV_relab_v2_gut_cestode_present/significant_results.tsv
+2022-02-14 15:01:45 INFO::Writing heatmap of significant results to file: maaslin2_out/ASV_relab_v2_gut_cestode_present/heatmap.pdf
+2022-02-14 15:01:45 INFO::Writing association plots (one for each significant association) to output folder: maaslin2_out/ASV_relab_v2_gut_cestode_present

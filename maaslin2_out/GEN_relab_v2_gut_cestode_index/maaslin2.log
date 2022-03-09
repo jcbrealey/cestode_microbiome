@@ -1,47 +1,51 @@
-2021-07-08 15:03:24 INFO::Writing function arguments to log file
-2021-07-08 15:03:24 DEBUG::Function arguments
-2021-07-08 15:03:24 DEBUG::Output folder: maaslin2_out/GEN_relab_v2_gut_cestode_index
-2021-07-08 15:03:24 DEBUG::Min Abundance: 0.000000
-2021-07-08 15:03:24 DEBUG::Min Prevalence: 0.100000
-2021-07-08 15:03:24 DEBUG::Normalization: NONE
-2021-07-08 15:03:24 DEBUG::Transform: NONE
-2021-07-08 15:03:24 DEBUG::Analysis method: LM
-2021-07-08 15:03:24 DEBUG::Max significance: 0.250000
-2021-07-08 15:03:24 DEBUG::Random effects: Sampling.Date
-2021-07-08 15:03:24 DEBUG::Fixed effects: Cestode.index,Feed.Type,Sex,Size.class
-2021-07-08 15:03:24 DEBUG::Correction method: BH
-2021-07-08 15:03:24 DEBUG::Standardize: TRUE
-2021-07-08 15:03:24 DEBUG::Cores: 1
-2021-07-08 15:03:24 INFO::Verifying options selected are valid
-2021-07-08 15:03:24 INFO::Determining format of input files
-2021-07-08 15:03:24 INFO::Input format is data samples as rows and metadata samples as rows
-2021-07-08 15:03:24 DEBUG::A total of 30 samples were found in both the data and metadata
-2021-07-08 15:03:24 DEBUG::Reordering data/metadata to use same sample ordering
-2021-07-08 15:03:24 INFO::Formula for random effects: expr ~ (1 | Sampling.Date)
-2021-07-08 15:03:24 INFO::Formula for fixed effects: expr ~  Cestode.index + Feed.Type + Sex + Size.class
-2021-07-08 15:03:24 INFO::Running selected normalization method: NONE
-2021-07-08 15:03:24 INFO::Filter data based on min abundance and min prevalence
-2021-07-08 15:03:24 INFO::Total samples in data: 30
-2021-07-08 15:03:24 INFO::Min samples required with min abundance for a feature not to be filtered: 3.000000
-2021-07-08 15:03:24 INFO::Total filtered features: 24
-2021-07-08 15:03:24 INFO::Filtered feature names: Mycoplasmataceae_sp, Ureaplasma, Psychromonas, Enhydrobacter, Lawsonella, Lactococcus, Anaerococcus, Jeotgalicoccus, Psychrobacter, Bradyrhizobium, Sphingobium, Tateyamaria, Geobacillus, Staphylococcus, Corynebacterium, Pantoea, Peptostreptococcus, Prevotella, Acidovorax, Rhodococcus, Weissella, Caproiciproducens, Tepidimicrobium, Pseudoalteromonas
-2021-07-08 15:03:24 INFO::Applying z-score to standardize continuous metadata
-2021-07-08 15:03:24 INFO::Running selected transform method: NONE
-2021-07-08 15:03:24 INFO::Running selected analysis method: LM
-2021-07-08 15:03:24 INFO::Fitting model to feature number 1, Mycoplasma
-2021-07-08 15:03:24 INFO::Fitting model to feature number 2, Carnobacterium
-2021-07-08 15:03:24 INFO::Fitting model to feature number 3, Photobacterium
-2021-07-08 15:03:24 INFO::Fitting model to feature number 4, Aliivibrio
-2021-07-08 15:03:24 INFO::Fitting model to feature number 5, Lactobacillus
-2021-07-08 15:03:24 INFO::Fitting model to feature number 6, Brevinema
-2021-07-08 15:03:24 INFO::Fitting model to feature number 7, Streptococcus
-2021-07-08 15:03:24 INFO::Counting total values for each feature
-2021-07-08 15:03:24 INFO::Writing residuals to file maaslin2_out/GEN_relab_v2_gut_cestode_index/residuals.rds
-2021-07-08 15:03:24 INFO::Writing all results to file (ordered by increasing q-values): maaslin2_out/GEN_relab_v2_gut_cestode_index/all_results.tsv
-2021-07-08 15:03:24 INFO::Writing the significant results (those which are less than or equal to the threshold of 0.250000 ) to file (ordered by increasing q-values): maaslin2_out/GEN_relab_v2_gut_cestode_index/significant_results.tsv
-2021-07-08 15:03:24 INFO::Writing heatmap of significant results to file: maaslin2_out/GEN_relab_v2_gut_cestode_index/heatmap.pdf
-2021-07-08 15:03:24 INFO::Writing association plots (one for each significant association) to output folder: maaslin2_out/GEN_relab_v2_gut_cestode_index
-2021-07-08 15:03:24 INFO::Plotting associations from most to least significant, grouped by metadata
-2021-07-08 15:03:24 INFO::Plotting data for metadata number 1, Cestode.index
-2021-07-08 15:03:24 INFO::Creating boxplot for categorical data, Cestode.index vs Photobacterium
-2021-07-08 15:03:24 INFO::Creating boxplot for categorical data, Cestode.index vs Mycoplasma
+2022-02-14 15:00:33 INFO::Writing function arguments to log file
+2022-02-14 15:00:33 DEBUG::Function arguments
+2022-02-14 15:00:33 DEBUG::Output folder: maaslin2_out/GEN_relab_v2_gut_cestode_index
+2022-02-14 15:00:33 DEBUG::Min Abundance: 0.000000
+2022-02-14 15:00:33 DEBUG::Min Prevalence: 0.100000
+2022-02-14 15:00:33 DEBUG::Normalization: NONE
+2022-02-14 15:00:33 DEBUG::Transform: NONE
+2022-02-14 15:00:33 DEBUG::Analysis method: LM
+2022-02-14 15:00:33 DEBUG::Max significance: 0.250000
+2022-02-14 15:00:33 DEBUG::Random effects: Sampling.Date
+2022-02-14 15:00:33 DEBUG::Fixed effects: Cestode.index,Feed.Type,Sex,Size.class
+2022-02-14 15:00:33 DEBUG::Correction method: BH
+2022-02-14 15:00:33 DEBUG::Standardize: TRUE
+2022-02-14 15:00:33 DEBUG::Cores: 1
+2022-02-14 15:00:33 INFO::Verifying options selected are valid
+2022-02-14 15:00:33 INFO::Determining format of input files
+2022-02-14 15:00:33 INFO::Input format is data samples as rows and metadata samples as rows
+2022-02-14 15:00:33 DEBUG::A total of 30 samples were found in both the data and metadata
+2022-02-14 15:00:33 DEBUG::Reordering data/metadata to use same sample ordering
+2022-02-14 15:00:33 INFO::Formula for random effects: expr ~ (1 | Sampling.Date)
+2022-02-14 15:00:33 INFO::Formula for fixed effects: expr ~  Cestode.index + Feed.Type + Sex + Size.class
+2022-02-14 15:00:33 INFO::Filter data based on min abundance and min prevalence
+2022-02-14 15:00:33 INFO::Total samples in data: 30
+2022-02-14 15:00:33 INFO::Min samples required with min abundance for a feature not to be filtered: 3.000000
+2022-02-14 15:00:33 INFO::Total filtered features: 24
+2022-02-14 15:00:33 INFO::Filtered feature names from abundance and prevalence filtering: Mycoplasmataceae_sp, Ureaplasma, Psychromonas, Enhydrobacter, Lawsonella, Lactococcus, Anaerococcus, Jeotgalicoccus, Psychrobacter, Bradyrhizobium, Sphingobium, Tateyamaria, Geobacillus, Staphylococcus, Corynebacterium, Pantoea, Peptostreptococcus, Prevotella, Acidovorax, Rhodococcus, Weissella, Caproiciproducens, Tepidimicrobium, Pseudoalteromonas
+2022-02-14 15:00:33 INFO::Total filtered features with variance filtering: 0
+2022-02-14 15:00:33 INFO::Filtered feature names from variance filtering:
+2022-02-14 15:00:33 INFO::Running selected normalization method: NONE
+2022-02-14 15:00:33 INFO::Applying z-score to standardize continuous metadata
+2022-02-14 15:00:33 INFO::Running selected transform method: NONE
+2022-02-14 15:00:33 INFO::Running selected analysis method: LM
+2022-02-14 15:00:33 INFO::Fitting model to feature number 1, Mycoplasma
+2022-02-14 15:00:33 INFO::Fitting model to feature number 2, Carnobacterium
+2022-02-14 15:00:33 INFO::Fitting model to feature number 3, Photobacterium
+2022-02-14 15:00:33 INFO::Fitting model to feature number 4, Aliivibrio
+2022-02-14 15:00:33 INFO::Fitting model to feature number 5, Lactobacillus
+2022-02-14 15:00:33 INFO::Fitting model to feature number 6, Brevinema
+2022-02-14 15:00:33 INFO::Fitting model to feature number 7, Streptococcus
+2022-02-14 15:00:33 INFO::Counting total values for each feature
+2022-02-14 15:00:33 INFO::Writing residuals to file maaslin2_out/GEN_relab_v2_gut_cestode_index/residuals.rds
+2022-02-14 15:00:33 INFO::Writing fitted values to file maaslin2_out/GEN_relab_v2_gut_cestode_index/fitted.rds
+2022-02-14 15:00:33 INFO::Writing extracted random effects to file maaslin2_out/GEN_relab_v2_gut_cestode_index/ranef.rds
+2022-02-14 15:00:33 INFO::Writing all results to file (ordered by increasing q-values): maaslin2_out/GEN_relab_v2_gut_cestode_index/all_results.tsv
+2022-02-14 15:00:33 INFO::Writing the significant results (those which are less than or equal to the threshold of 0.250000 ) to file (ordered by increasing q-values): maaslin2_out/GEN_relab_v2_gut_cestode_index/significant_results.tsv
+2022-02-14 15:00:33 INFO::Writing heatmap of significant results to file: maaslin2_out/GEN_relab_v2_gut_cestode_index/heatmap.pdf
+2022-02-14 15:00:33 INFO::Writing association plots (one for each significant association) to output folder: maaslin2_out/GEN_relab_v2_gut_cestode_index
+2022-02-14 15:00:33 INFO::Plotting associations from most to least significant, grouped by metadata
+2022-02-14 15:00:33 INFO::Plotting data for metadata number 1, Cestode.index
+2022-02-14 15:00:33 INFO::Creating boxplot for categorical data, Cestode.index vs Photobacterium
+2022-02-14 15:00:34 INFO::Creating boxplot for categorical data, Cestode.index vs Mycoplasma

@@ -1,16 +1,16 @@
-.libPaths("C:/Users/jaelleb/R/Rv4.0.2_libs")
+.libPaths("C:/Users/jaelleb/R/Rv4.1.2_libs")
 library(ggplot2)
 library(reshape2)
 library(phyloseq)
 library(decontam)
 library(vegan)
 library(RColorBrewer)
-#library(VennDiagram)
-#library(pheatmap)
 library(microbiome)
 library(cowplot)
 library(Maaslin2)
-#library(boral)
+library(MicEco)
+library(hillR)
+library(ggVennDiagram)
 set.seed(835)
 
 ####### HoloFish Tapeworm 16S DADA2 + phyloseq analyses #######
@@ -104,7 +104,7 @@ meta <- read.csv("data/HoloFish_metadata_samples_cestode.csv")
 
 row.names(meta) <- meta$SampleID.R
 meta$Cestode.index <- factor(meta$Cestode.index, levels = c(0,1,2,3), ordered = T)
-meta$Sample.type <- factor(meta$Sample.type, levels = c("salmon_gut","tegument","endo","c_mock","c_blank","c_ddH2O"))
+meta$Sample.type <- factor(meta$Sample.type, levels = c("salmon_gut","cestode_wash","cestode_body","c_mock","c_blank","c_ddH2O"))
 
 row.names(meta.holofish) <- meta.holofish$Fish.ID
 meta.holofish$Cestode.index <- factor(meta.holofish$Cestode.index, levels = c(0,1,2,3), ordered = T)
@@ -187,7 +187,9 @@ ggplot(melt(mock.comp, id.vars = "SampleID.R", measure.vars = c(2:ncol(mock.comp
   theme_classic()+
   theme(axis.text = element_text(size = 11, colour = "black"), axis.title = element_text(size = 12),
         legend.text = element_text(size = 11, colour = "black"), legend.title = element_text(size = 12))
-ggsave("figures/Supp_fig_mock_composition.png", units = "in", dpi = 600, width = 9.5, height = 4.5)
+if(!file.exists("figures/Supp_fig_mock_composition.png")){
+  ggsave("figures/Supp_fig_mock_composition.png", units = "in", dpi = 600, width = 9.5, height = 4.5)
+}
 
 #### QC: PCR false positives identification ####
 asv.tab.filt <- compare_pcr_reps(asv.tab, samples, ntimes = 1, nreps = 2)
@@ -244,7 +246,7 @@ ggplot(contam.sums, aes(Sample.type, PCR.FP))+
   geom_boxplot(outlier.colour = NA)+
   geom_point(aes(color = Sample.type), size = 3, position = position_jitterdodge())+
   scale_y_continuous(limits = c(0,1))+
-  scale_x_discrete(labels = c("Fish gut","Cestode skin","Cestode endo","Mock","Blanks","Water"))+
+  scale_x_discrete(labels = c("salmon gut","cestode wash","cestode body","mock","blanks","water"))+
   labs(title = "PCR false positives", x = "Sample type", y = "Relative abundance")+
   theme_classic()+
   theme(axis.text = element_text(size = 10, colour = "black"), axis.title = element_text(size = 11),
@@ -253,7 +255,7 @@ ggplot(contam.sums, aes(Sample.type, contams))+
   geom_boxplot(outlier.colour = NA)+
   geom_point(aes(color = Sample.type), size = 3, position = position_jitterdodge())+
   scale_y_continuous(limits = c(0,1))+
-  scale_x_discrete(labels = c("Fish gut","Cestode skin","Cestode endo","Mock","Blanks","Water"))+
+  scale_x_discrete(labels = c("salmon gut","cestode wash","cestode body","mock","blanks","water"))+
   labs(title = "True contaminants", x = "Sample type", y = "Relative abundance")+
   theme_classic()+
   theme(axis.text = element_text(size = 10, colour = "black"), axis.title = element_text(size = 11),
@@ -262,7 +264,7 @@ ggplot(contam.sums, aes(Sample.type, mockcross))+
   geom_boxplot(outlier.colour = NA)+
   geom_point(aes(color = Sample.type), size = 3, position = position_jitterdodge())+
   scale_y_continuous(limits = c(0,1))+
-  scale_x_discrete(labels = c("Fish gut","Cestode skin","Cestode endo","Mock","Blanks","Water"))+
+  scale_x_discrete(labels = c("salmon gut","cestode wash","cestode body","mock","blanks","water"))+
   labs(title = "Cross contamination from mock", x = "Sample type", y = "Relative abundance")+
   theme_classic()+
   theme(axis.text = element_text(size = 10, colour = "black"), axis.title = element_text(size = 11),
@@ -285,12 +287,14 @@ asv.tab.filt2 <- asv.tab.filt2[which(rowSums(asv.tab.filt2) > 0),]
 ggplot(meta[which(!meta$Lab.control),], aes(Sample.type, Reads.postprocessing, color = Cestode.index))+
   geom_boxplot(outlier.colour = NA)+
   geom_point(aes(color = Cestode.index), size = 3, position = position_jitterdodge())+
-  scale_x_discrete(labels = c("gut", "tegument", "endo"))+
+  scale_x_discrete(labels = c("gut", "wash", "body"))+
   labs(x = "Sample type", y = "Reads post processing", color = "Cestode index")+
   theme_classic()+
   theme(axis.text = element_text(size = 12, colour = "black"), axis.title = element_text(size = 13),
         legend.position = "right")
-ggsave("figures/Supp_fig_readsPOSTprocessing.png", units = "in", dpi = 600, width = 6, height = 4)
+if(!file.exists("figures/Supp_fig_readsPOSTprocessing.png")){
+  ggsave("figures/Supp_fig_readsPOSTprocessing.png", units = "in", dpi = 600, width = 6, height = 4)
+}
 
 
 #### final asv table for publication ####
@@ -354,7 +358,13 @@ ps.relab <- transform_sample_counts(ps.samples, function(OTU) OTU/sum(OTU))
 ps.clr <- transform_sample_counts(ps.samples, function(OTU) OTU+1) #pseudo-count
 ps.clr <- microbiome::transform(ps.clr, 'clr')
 
-ord.reps <- ordinate(ps.clr, method = "NMDS", distance = "euclidean", k = 3)
+if(file.exists("data/ordination_pcr_replicates_clr_nmds.rds")){
+  ord.reps <- readRDS("data/ordination_pcr_replicates_clr_nmds.rds")
+} else {
+  ord.reps <- ordinate(ps.clr, method = "NMDS", distance = "euclidean", k = 3)
+  saveRDS(ord.reps, "data/ordination_pcr_replicates_clr_nmds.rds")
+}
+
 ord.reps$stress
 # 0.12072
 
@@ -366,16 +376,18 @@ plot_ordination(ps.clr, ord.reps, type="samples", axes=c(1,2), color="Sample.typ
   geom_point(size=2)+
   scale_x_continuous(limits = c(-20,20))+
   scale_y_continuous(limits = c(-20,20))+
-  scale_color_manual(values = gg_color_hue(3), labels = c("gut","tegument","endo"))+
+  scale_color_manual(values = gg_color_hue(3), labels = c("salmon gut","cestode wash","cestode body"))+
   coord_fixed(ratio = 1)+
-  labs(color="Sample type")+
+  labs(color="Sample type", shape="PCR replicate")+
   theme_bw()+
   theme(panel.grid = element_blank(), legend.position = "right",
         axis.text = element_text(size = 12, colour = "black"), axis.title = element_text(size = 13),
         panel.border = element_rect(size = 1.2))
-ggsave("figures/Supp_fig_NMDS_PCR_replicates.png", units = "in", dpi = 600, width = 5, height = 5)
+if(!file.exists("figures/Supp_fig_NMDS_PCR_replicates.png")){
+  ggsave("figures/Supp_fig_NMDS_PCR_replicates.png", units = "in", dpi = 600, width = 5, height = 5)
+}
 
-# fairly clear grouping by Sample.type type, with tapeworm skin between fish gut & tapeworm endo
+# fairly clear grouping by Sample.type type, with cestode wash between salmon gut & cestode body
 # replicates also seem to be grouping together - can combine
 
 ## merge replicates ##
@@ -404,15 +416,34 @@ dfm.relab <- merge(dfm.relab, meta.merged, by = "SampleID")
 dfm.relab.m <- melt(dfm.relab, id.vars = grep("seq",names(dfm.relab),invert = T), measure.vars = grep("seq",names(dfm.relab)),
                     value.name = "proportion", variable.name = "ASV.ID")
 
-
+# Supp figure: rarefaction/accumulation curve to check whether sequencing effort was sufficient
+rcurve.all <- rcurve(ps.merge, subsamp = 10^c(1:5), trim = TRUE, add_sample_data = TRUE)
+ggplot(rcurve.all, aes(Reads, Richness, group = SampleID, color = Sample.type))+
+  geom_point(size = 2)+
+  geom_line()+
+  scale_x_continuous(trans = "log10")+
+  theme_classic()+
+  theme(axis.text = element_text(size = 12, colour = "black"), axis.title = element_text(size = 13),
+        legend.position = "none")+
+  facet_wrap(~Sample.type, nrow = 3,
+             labeller=labeller(Sample.type = c(salmon_gut="Salmon gut", cestode_wash="Cestode wash", cestode_body="Cestode body")))
+if(!file.exists("figures/Supp_fig_accumulation_curve.png")){
+  ggsave("figures/Supp_fig_accumulation_curve.png", units = "in", dpi = 600, width = 6, height = 6)
+}
 
 #### Ordinations ####
 ## Sample type
-ord.samples <- ordinate(psm.clr, method = "NMDS", distance = "euclidean", k = 3)
+if(file.exists("data/ordination_sample_type_clr_nmds.rds")){
+  ord.samples <- readRDS("data/ordination_sample_type_clr_nmds.rds")
+} else {
+  ord.samples <- ordinate(psm.clr, method = "NMDS", distance = "euclidean", k = 3)
+  saveRDS(ord.reps, "data/ordination_sample_type_clr_nmds.rds")
+}
+
 ord.samples$stress
 "0.1169566"
 
-sample_data(psm.clr)$Sample.type <- factor(sample_data(psm.clr)$Sample.type, levels = c("salmon_gut","tegument","endo"))
+sample_data(psm.clr)$Sample.type <- factor(sample_data(psm.clr)$Sample.type, levels = c("salmon_gut","cestode_wash","cestode_body"))
 p.ord3.1 <- plot_ordination(psm.clr, ord.samples, type="samples", axes=c(1,2), color="Sample.type")+
   geom_point(size=1)+
   scale_x_continuous(limits = c(-20,20))+
@@ -434,7 +465,7 @@ p.ord3.2 <- plot_ordination(psm.clr, ord.samples, type="samples", axes=c(1,3), c
 p.ord3.l <- get_legend(
   plot_ordination(psm.clr, ord.samples, type="samples", axes=c(1,2), color="Sample.type")+
     geom_point(size=1)+
-    scale_color_manual(values = gg_color_hue(3), labels = c("Salmon gut","Cestode tegument","Cestode endo"))+
+    scale_color_manual(values = gg_color_hue(3), labels = c("Salmon gut","Cestode wash","Cestode body"))+
     theme_bw()+ 
     labs(color="Sample type")+
     theme(text = element_text(color = "black", size = 7), panel.grid = element_blank(), legend.position = "right",
@@ -443,27 +474,30 @@ p.ord3.l <- get_legend(
 )
 
 # Figure 1 E-F: NMDS of sample type
-pdf("figures/Fig1ef_NMDS_by_sample_type.pdf", 
-    width = 6.5, height = 4, colormodel = "srgb", paper = "a4r")
-plot_grid(p.ord3.1, p.ord3.2, p.ord3.l, nrow = 1, rel_widths = c(1,1,0.5))
-dev.off()
+if(!file.exists("figures/Fig1ef_NMDS_by_sample_type.pdf")){
+  pdf("figures/Fig1ef_NMDS_by_sample_type.pdf", 
+      width = 6.5, height = 4, colormodel = "srgb", paper = "a4r")
+  plot_grid(p.ord3.1, p.ord3.2, p.ord3.l, nrow = 1, rel_widths = c(1,1,0.5))
+  dev.off()
+}
+
 
 # PERMANOVA
 ord.samples.dist <- phyloseq::distance(psm.clr, method = "euclidean")
-adonis(ord.samples.dist ~ Sample.type, data = meta.merged)
+adonis(ord.samples.dist ~ Sample.type, data = meta.merged) ###################### 14/2/22 getting weird error?
 "            Df SumsOfSqs MeanSqs F.Model      R2 Pr(>F)    
 Sample.type  2    4653.6 2326.80  8.7097 0.21395  0.001 ***
 Residuals   64   17097.6  267.15         0.78605           
 Total       66   21751.2                 1.00000"
 betadisper(ord.samples.dist, meta.merged$Sample.type)
 "Average distance to median:
-salmon_gut   tegument       endo 
-     16.75      16.25      12.68 "
+  salmon_gut cestode_wash cestode_body 
+       16.75        16.25        12.68"
 permutest(betadisper(ord.samples.dist, meta.merged$Sample.type))
 "          Df  Sum Sq Mean Sq      F N.Perm Pr(>F)   
 Groups     2  215.07 107.533 6.5706    999  0.003 **
 Residuals 64 1047.41  16.366
-# difference may be due to difference in dispersions, particularly for endo"
+# difference may be due to difference in dispersions, particularly for cestode body"
 
 ## Salmon gut
 psm.gut <- subset_samples(ps.merge, Sample.type=="salmon_gut")
@@ -472,24 +506,33 @@ psm.gut <- filter_taxa(psm.gut, function(x) sum(x) > 0, TRUE)
 psm.gut.relab <- transform_sample_counts(psm.gut, function(OTU) OTU/sum(OTU))
 psm.gut.clr <- transform_sample_counts(psm.gut, function(OTU) OTU+1) #pseudo-count
 psm.gut.clr <- microbiome::transform(psm.gut.clr, 'clr')
-ord.gut <- ordinate(psm.gut.clr, method = "NMDS", distance = "euclidean", k = 2)
+
+if(file.exists("data/ordination_salmon_gut_clr_nmds.rds")){
+  ord.gut <- readRDS("data/ordination_salmon_gut_clr_nmds.rds")
+} else {
+  ord.gut <- ordinate(psm.gut.clr, method = "NMDS", distance = "euclidean", k = 2)
+  saveRDS(ord.reps, "data/ordination_salmon_gut_clr_nmds.rds")
+}
+
 ord.gut$stress
-# 0.1504632
+# 0.150463
 
 # Supp figure: NMDS of salmon gut by cestode index
-png("figures/Supp_fig_NMDS_salmon_gut_by_cestode.png",  units = "in", width = 3.4, height = 3.4, res = 600)
-plot_ordination(psm.gut.clr, ord.gut, type="samples", axes=c(1,2), color="Cestode.index")+
-  geom_point(size=1)+
-  labs(color = "Cestode index")+
-  scale_x_continuous(limits = c(-25,25))+
-  scale_y_continuous(limits = c(-25,25))+
-  coord_fixed(ratio = 1)+
-  theme_bw()+
-  theme(text = element_text(color = "black", size = 7), panel.grid = element_blank(), 
-        legend.position = "right",
-        axis.text = element_text(size = 6, colour = "black"), 
-        panel.border = element_rect(size = 0.5))
-dev.off()
+if(!file.exists("figures/Supp_fig_NMDS_salmon_gut_by_cestode.png")){
+  png("figures/Supp_fig_NMDS_salmon_gut_by_cestode.png",  units = "in", width = 3.4, height = 3.4, res = 600)
+  plot_ordination(psm.gut.clr, ord.gut, type="samples", axes=c(1,2), color="Cestode.index")+
+    geom_point(size=1)+
+    labs(color = "Cestode index")+
+    scale_x_continuous(limits = c(-25,25))+
+    scale_y_continuous(limits = c(-25,25))+
+    coord_fixed(ratio = 1)+
+    theme_bw()+
+    theme(text = element_text(color = "black", size = 7), panel.grid = element_blank(), 
+          legend.position = "right",
+          axis.text = element_text(size = 6, colour = "black"), 
+          panel.border = element_rect(size = 0.5))
+  dev.off()
+}
 
 
 #### Figure 1: microbiota composition between sample types ####
@@ -507,24 +550,52 @@ psm.genus.top <- top_taxa(psm.genus, sample_var = "SampleID", top = 12)
 psm.genus.top <- melt(psm.genus.top, id.vars = "SampleID", value.name = "count", variable.name = "taxon")
 psm.genus.top <- merge(psm.genus.top, meta.merged, by = "SampleID", all.x = T, all.y = F)
 psm.genus.top$Fish.ID.of <- factor(psm.genus.top$Fish.ID, levels = unique(meta.merged[order(meta.merged$Cestode.index),"Fish.ID"]), ordered = TRUE)
-psm.genus.top$Sample.type <- factor(psm.genus.top$Sample.type, levels = c("salmon_gut","tegument","endo"))
+psm.genus.top$Sample.type <- factor(psm.genus.top$Sample.type, levels = c("salmon_gut","cestode_wash","cestode_body"))
 
 # Figure 1B-D: 16S genus composition
-pdf("figures/Fig1bcd_genus_composition_by_sample_type.pdf",
-    width = 6.5, height = 5, colormodel = "srgb", paper = "a4r")
-ggplot(psm.genus.top, aes(Fish.ID.of, count, fill=taxon))+
-  facet_wrap(Sample.type~., nrow = 3, 
-             labeller=labeller(Sample.type = c(salmon_gut="Salmon gut", tegument="Cestode tegument", endo="Cestode endo"))) +
-  geom_col(position="fill", width = 1)+
-  labs(x="Fish ID", y="Proportion of 16S reads", fill="Genus")+
-  scale_fill_manual(values=c(brewer.pal(12, "Set3"), "black","#969696"))+
-  geom_vline(xintercept = 9.5, linetype=2)+
-  geom_vline(xintercept = 18.5, linetype=2)+
-  geom_vline(xintercept = 27.5, linetype=2)+
-  theme(text = element_text(color = "black", size = 7), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"), axis.text = element_text(color = "black"), axis.text.x = element_text(angle = 90),
-        legend.position = "right", strip.text = element_text(face = "bold"))
-dev.off()
+if(!file.exists("figures/Fig1bcd_genus_composition_by_sample_type.pdf")){
+  pdf("figures/Fig1bcd_genus_composition_by_sample_type.pdf",
+      width = 6.5, height = 5, colormodel = "srgb", paper = "a4r")
+  ggplot(psm.genus.top, aes(Fish.ID.of, count, fill=taxon))+
+    facet_wrap(Sample.type~., nrow = 3, 
+               labeller=labeller(Sample.type = c(salmon_gut="Salmon gut", cestode_wash="Cestode wash", cestode_body="Cestode body"))) +
+    geom_col(position="fill", width = 1)+
+    labs(x="Fish ID", y="Proportion of 16S reads", fill="Genus")+
+    scale_fill_manual(values=c(brewer.pal(12, "Set3"), "black","#969696"))+
+    geom_vline(xintercept = 9.5, linetype=2)+
+    geom_vline(xintercept = 18.5, linetype=2)+
+    geom_vline(xintercept = 27.5, linetype=2)+
+    theme(text = element_text(color = "black", size = 7), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), 
+          axis.line = element_line(colour = "black"), axis.text = element_text(color = "black"), axis.text.x = element_text(angle = 90),
+          legend.position = "right", strip.text = element_text(face = "bold"))
+  dev.off()
+}
+
+
+## shared and unique ASVs between sample types (using ps_venn from MicEco package)
+## use plot = FALSE to return a list of shared and unique taxa
+# presence/absence of taxa, no abundance filter
+ps_venn(psm.relab, "Sample.type", weight = FALSE)
+ps_venn(psm.gut, "Cestode.present", weight = FALSE)
+
+sample_data(psm.relab)$SampleType.CestodeBin <- sapply(sample_data(psm.relab)$SampleID, function(x){
+  df <- data.frame(sample_data(psm.relab))
+  if(df[which(df$SampleID == x),"Sample.type"] == "salmon_gut"){
+    paste0(c("gut","cestode",df[which(df$SampleID == x),"Cestode.present"]), collapse = "_")
+  } else {
+    as.character(df[which(df$SampleID == x),"Sample.type"])
+  }
+})
+
+# colours: gut = "#F8766D", wash = "#00BA38", body = "#619CFF"; cestode = "#fcdf03", no cestode = "#530087"
+
+if(!file.exists("figures/Supp_fig_Venn_16Staxa.png")){
+  png("figures/Supp_fig_Venn_16Staxa.png", units = "in", res = 600, width = 6, height = 4)
+  ps_venn(psm.relab, "SampleType.CestodeBin", weight = FALSE, fill = NA, col = c("#619CFF","#00BA38","#530087","#fcdf03"), lwd = 2,
+          labels = list(labels=NA, font=1), legend = TRUE)
+  dev.off()
+}
+
 
 #### Maaslin2 analysis to identify significantly changing genera and ASVs ####
 
@@ -533,11 +604,11 @@ maas.gen.relab <- as.data.frame(prop.table(as.matrix(psm.genus[,2:ncol(psm.genus
 maas.gen.relab <- maas.gen.relab[,names(maas.gen.relab) != "Unassigned"]
 
 meta.merged$Size.class <- factor(meta.merged$Size.class, levels = c("Small","Medium","Large"), ordered = T)
-meta.merged$Sample.type <- factor(meta.merged$Sample.type, levels = c("salmon_gut","tegument","endo"))
+meta.merged$Sample.type <- factor(meta.merged$Sample.type, levels = c("salmon_gut","cestode_wash","cestode_body"))
 meta.merged$Sampling.Date <- as.factor(meta.merged$Sampling.Date)
 meta.merged$Samples.per.fish <- sapply(as.character(meta.merged$Fish.ID), function(x) { nrow(meta.merged[which(meta.merged$Fish.ID == x),]) })
 
-# don't re-run if out files already exisit
+# don't re-run if out files already exist
 
 ## Genus relab
 # Sample.type comparison
@@ -549,6 +620,7 @@ if(file.exists("maaslin2_out/GEN_relab_v1_sample_type/all_results.tsv")){
     input_metadata = meta.merged[which(meta.merged$Samples.per.fish == 3),],
     fixed_effects = c("Sample.type"),
     random_effects = c("Fish.ID","Sampling.Date"),
+    reference = c("Sample.type,salmon_gut"),
     output = "maaslin2_out/GEN_relab_v1_sample_type",
     normalization = "NONE", transform = "NONE"
   )
@@ -564,6 +636,7 @@ if(file.exists("maaslin2_out/GEN_relab_v2_gut_cestode_present/all_results.tsv"))
     input_metadata = meta.merged[which(meta.merged$Sample.type == "salmon_gut"),],
     fixed_effects = c("Cestode.present","Feed.Type","Sex","Size.class"),
     random_effects = c("Sampling.Date"),
+    reference = c("Size.class,Small"),
     output = "maaslin2_out/GEN_relab_v2_gut_cestode_present",
     normalization = "NONE", transform = "NONE"
   )
@@ -578,6 +651,7 @@ if(file.exists("maaslin2_out/GEN_relab_v2_gut_cestode_index/all_results.tsv")){
     input_metadata = meta.merged[which(meta.merged$Sample.type == "salmon_gut"),],
     fixed_effects = c("Cestode.index","Feed.Type","Sex","Size.class"),
     random_effects = c("Sampling.Date"),
+    reference = c("Size.class,Small"),
     output = "maaslin2_out/GEN_relab_v2_gut_cestode_index",
     normalization = "NONE", transform = "NONE"
   )
@@ -594,6 +668,7 @@ if(file.exists("maaslin2_out/ASV_relab_v1_sample_type/all_results.tsv")){
     input_metadata = meta.merged[which(meta.merged$Samples.per.fish == 3),],
     fixed_effects = c("Sample.type"),
     random_effects = c("Fish.ID","Sampling.Date"),
+    reference = c("Sample.type,salmon_gut"),
     output = "maaslin2_out/ASV_relab_v1_sample_type",
     normalization = "NONE", transform = "NONE"
   )
@@ -609,6 +684,7 @@ if(file.exists("maaslin2_out/ASV_relab_v2_gut_cestode_present/all_results.tsv"))
     input_metadata = meta.merged[which(meta.merged$Sample.type == "salmon_gut"),],
     fixed_effects = c("Cestode.present","Feed.Type","Sex","Size.class"),
     random_effects = c("Sampling.Date"),
+    reference = c("Size.class,Small"),
     output = "maaslin2_out/ASV_relab_v2_gut_cestode_present",
     normalization = "NONE", transform = "NONE"
   )
@@ -623,6 +699,7 @@ if(file.exists("maaslin2_out/ASV_relab_v2_gut_cestode_index/all_results.tsv")){
     input_metadata = meta.merged[which(meta.merged$Sample.type == "salmon_gut"),],
     fixed_effects = c("Cestode.index","Feed.Type","Sex","Size.class"),
     random_effects = c("Sampling.Date"),
+    reference = c("Size.class,Small"),
     output = "maaslin2_out/ASV_relab_v2_gut_cestode_index",
     normalization = "NONE", transform = "NONE"
   )
@@ -636,7 +713,7 @@ maas.gen.relab.v2a[which(maas.gen.relab.v2a$qval < 0.2),]
 maas.gen.relab.v2b[which(maas.gen.relab.v2b$qval < 0.2),]
 
 maas.asv.relab.v1[which(maas.asv.relab.v1$qval < 0.2),]
-maas.asv.relab.v1$genus <- sapply(maas.asv.relab.v1$feature, function(x){
+maas.asv.relab.v1$ASV_genus <- sapply(maas.asv.relab.v1$feature, function(x){
   if(is.na(asv.taxa.df[as.character(x),"Genus"])){
     asv.taxa.df[as.character(x),"Family"]
   } else {
@@ -647,7 +724,7 @@ maas.asv.relab.v1$genus <- sapply(maas.asv.relab.v1$feature, function(x){
 maas.asv.relab.v2a[which(maas.asv.relab.v2a$qval < 0.2),]
 #none
 maas.asv.relab.v2b[which(maas.asv.relab.v2b$qval < 0.25),]
-maas.asv.relab.v2b$genus <- sapply(maas.asv.relab.v2b$feature, function(x){
+maas.asv.relab.v2b$ASV_genus <- sapply(maas.asv.relab.v2b$feature, function(x){
   if(is.na(asv.taxa.df[as.character(x),"Genus"])){
     asv.taxa.df[as.character(x),"Family"]
   } else {
@@ -678,23 +755,29 @@ maas.asv.relab.df$ASV.ID.of <- factor(
   maas.asv.relab.df$ASV.ID, levels = unique(maas.asv.relab.df[order(maas.asv.relab.df$Genus),"ASV.ID"]), ordered = TRUE
 )
 
-#### Top ASV plots ####
-# Supp Figue: Sample type
-ggplot(maas.asv.relab.df[which(maas.asv.relab.df$ASV.ID %in% maas.asv.relab.sample_type.sigseqs),],
-       aes(Sample.type, proportion))+
-  facet_wrap(~Genus + ASV.ID.of, scales = "free_y", nrow = 6)+
-  geom_boxplot(outlier.colour = NA, fill = NA)+
-  geom_point(aes(color=Sample.type), size = 2, position = position_jitterdodge())+
-  scale_x_discrete(labels = c("gut","tegument","endo"))+
-  labs(x="Sample type", y="Proportion of 16S reads")+
-  theme_bw()+
-  theme(text = element_text(color = "black", size = 7), rect = element_rect(size = 0.5),
-        line = element_line(size = 0.5),
-        axis.text = element_text(size = 6, colour = "black"),
-        legend.position = "none", strip.text = element_text(face = "bold"))
-ggsave("figures/Supp_fig_sampletype_ASV_boxplot.png", units = "in", dpi = 600, width = 6.5, height = 10)
+# Supp table of Maaslin2 results
+if(!file.exists("figures/Supp_table_maaslin2_results.csv")){
+  maas.gen.relab.v1$model <- "Genus_m1"
+  maas.gen.relab.v2b$model <- "Genus_m2"
+  maas.gen.relab.v1$ASV_genus <- NA
+  maas.gen.relab.v2b$ASV_genus <- NA
+  
+  maas.asv.relab.v1$model <- "ASV_m1"
+  maas.asv.relab.v2b$model <- "ASV_m2"
+  
+  maas.res <- rbind.data.frame(
+    maas.gen.relab.v2b[which(maas.gen.relab.v2b$qval < 0.25),c(2,1,3:9,11,10)],
+    maas.asv.relab.v2b[which(maas.asv.relab.v2b$qval < 0.25),c(2,1,3:11)],
+    maas.gen.relab.v1[which(maas.gen.relab.v1$qval < 0.25),c(2,1,3:9,11,10)],
+    maas.asv.relab.v1[which(maas.asv.relab.v1$qval < 0.25),c(2,1,3:11)]
+  )
+  write.csv(maas.res, "figures/Supp_table_maaslin2_results.csv", row.names = F, quote = F)
+}
 
-# Supp Figue: Cestode index
+
+#### Top ASV and genera plots ####
+
+# Supp Figure: Cestode index (ASV)
 ggplot(maas.asv.relab.df[which(maas.asv.relab.df$ASV.ID %in% maas.asv.relab.cestode.sigseqs &
                                  maas.asv.relab.df$Sample.type == "salmon_gut"),],
        aes(Cestode.index, proportion))+
@@ -707,36 +790,19 @@ ggplot(maas.asv.relab.df[which(maas.asv.relab.df$ASV.ID %in% maas.asv.relab.cest
         line = element_line(size = 0.5),
         axis.text = element_text(size = 6, colour = "black"),
         legend.position = "none", strip.text = element_text(face = "bold"))
-ggsave("figures/Supp_fig_cestode_ASV_boxplot.png", units = "in", dpi = 600, width = 6.5, height = 2.5)
+if(!file.exists("figures/Supp_fig_cestode_ASV_boxplot.png")){
+  ggsave("figures/Supp_fig_cestode_ASV_boxplot.png", units = "in", dpi = 600, width = 6.5, height = 2.5)
+}
 
 
-#### Top genera plots ####
+# Supp Figure: Cestode index/present (genus)
 psm.genus.top.rel <- top_taxa(psm.genus, sample_var = "SampleID", top = 12)
 psm.genus.top.rel <- as.data.frame(prop.table(as.matrix(psm.genus.top.rel[,2:ncol(psm.genus.top.rel)]), margin = 1))
 psm.genus.top.rel$SampleID <- row.names(psm.genus.top.rel)
 psm.genus.top.rel <- melt(psm.genus.top.rel, id.vars = "SampleID", value.name = "proportion", variable.name = "taxon")
 psm.genus.top.rel <- merge(psm.genus.top.rel, meta.merged, by = "SampleID", all.x = T, all.y = F)
-psm.genus.top.rel$Sample.type <- factor(psm.genus.top.rel$Sample.type, levels = c("salmon_gut","tegument","endo"))
+psm.genus.top.rel$Sample.type <- factor(psm.genus.top.rel$Sample.type, levels = c("salmon_gut","cestode_wash","cestode_body"))
 
-# Supp Figue: Sample type
-ggplot(psm.genus.top.rel[which(psm.genus.top.rel$taxon 
-                               %in% c("Photobacterium","Carnobacterium","Aliivibrio",
-                                      "Ureaplasma","Mycoplasma","Brevinema",
-                                      "Lactobacillus","Mycoplasmataceae_sp")),],
-       aes(Sample.type, proportion))+
-  facet_wrap(~taxon, nrow = 2)+
-  geom_boxplot(outlier.colour = NA, fill = NA)+
-  geom_point(aes(color=Sample.type), size = 2, position = position_jitterdodge())+
-  scale_x_discrete(labels = c("gut","tegument","endo"))+
-  labs(x="Sample type", y="Proportion of 16S reads")+
-  theme_bw()+
-  theme(text = element_text(color = "black", size = 7), rect = element_rect(size = 0.5),
-        line = element_line(size = 0.5),
-        axis.text = element_text(size = 6, colour = "black"),
-        legend.position = "none", strip.text = element_text(face = "bold"))
-ggsave("figures/Supp_fig_sampletype_genus_boxplot.png", units = "in", dpi = 600, width = 6.5, height = 5)
-
-# Supp Figue: Cestode index / presence
 p.bx.gen.1 <-
   ggplot(psm.genus.top.rel[which(psm.genus.top.rel$Sample.type == "salmon_gut" &
                                    psm.genus.top.rel$taxon %in% c("Mycoplasma","Photobacterium")),],
@@ -770,7 +836,46 @@ p.bx.gen.2 <-
 
 plot_grid(p.bx.gen.1, p.bx.gen.2, align = "h", axis = "tblr", 
           nrow = 1, rel_widths = c(1,1.2), labels = c("a","b"))
-ggsave("figures/Supp_fig_cestode_genus_boxplot.png", units = "in", dpi = 600, width = 6.5, height = 2.5)
+if(!file.exists("figures/Supp_fig_cestode_genus_boxplot.png")){
+  ggsave("figures/Supp_fig_cestode_genus_boxplot.png", units = "in", dpi = 600, width = 6.5, height = 2.5)
+}
+
+# Supp Figure: Sample type (genus + ASV combined)
+maas.plot.st.p1 <-
+  ggplot(psm.genus.top.rel[which(psm.genus.top.rel$taxon 
+                                 %in% c("Photobacterium","Carnobacterium","Aliivibrio",
+                                        "Ureaplasma","Mycoplasma","Brevinema",
+                                        "Lactobacillus","Mycoplasmataceae_sp")),],
+         aes(Sample.type, proportion))+
+  facet_wrap(~taxon, nrow = 2)+
+  geom_boxplot(outlier.colour = NA, fill = NA)+
+  geom_point(aes(color=Sample.type), size = 2, position = position_jitterdodge())+
+  scale_x_discrete(labels = c("gut","wash","body"))+
+  labs(x="Sample type", y="Proportion of 16S reads")+
+  theme_bw()+
+  theme(text = element_text(color = "black", size = 7), rect = element_rect(size = 0.5),
+        line = element_line(size = 0.5),
+        axis.text = element_text(size = 6, colour = "black"),
+        legend.position = "none", strip.text = element_text(face = "bold"))
+
+maas.plot.st.p2 <- 
+  ggplot(maas.asv.relab.df[which(maas.asv.relab.df$ASV.ID %in% maas.asv.relab.sample_type.sigseqs),],
+         aes(Sample.type, proportion))+
+  facet_wrap(~Genus + ASV.ID.of, scales = "free_y", nrow = 4)+
+  geom_boxplot(outlier.colour = NA, fill = NA)+
+  geom_point(aes(color=Sample.type), size = 2, position = position_jitterdodge())+
+  scale_x_discrete(labels = c("gut","wash","body"))+
+  labs(x="Sample type", y="Proportion of 16S reads")+
+  theme_bw()+
+  theme(text = element_text(color = "black", size = 7), rect = element_rect(size = 0.5),
+        line = element_line(size = 0.5),
+        axis.text = element_text(size = 6, colour = "black"),
+        legend.position = "none", strip.text = element_text(face = "bold"))
+
+plot_grid(maas.plot.st.p1, maas.plot.st.p2, align = "hv", axis = "tblr", nrow = 2, rel_heights = c(0.75,1), labels = c("a","b"))
+if(!file.exists("figures/Supp_fig_sampletype_comb_genusASV_boxplot.png")){
+  ggsave("figures/Supp_fig_sampletype_comb_genusASV_boxplot.png", units = "in", dpi = 600, width = 10, height = 10)
+}
 
 
 #### Alpha diversity ####
@@ -779,31 +884,97 @@ alpha.asv <- data.frame(SampleID=row.names(df.merge),
                         Shannon=diversity(t(df.merge), index = "shannon"))
 
 alpha.asv <- merge(alpha.asv, meta.merged, by = "SampleID")
-alpha.asv$Sample.type <- factor(alpha.asv$Sample.type, levels = c("salmon_gut","tegument","endo"))
+alpha.asv$Sample.type <- factor(alpha.asv$Sample.type, levels = c("salmon_gut","cestode_wash","cestode_body"))
 
 # Supp Figure: alpha diversity
+p.alpha1 <-
 ggplot(alpha.asv, aes(Sample.type,Richness))+ #
   facet_grid(~Cestode.index)+
   geom_boxplot(outlier.color = NA)+
   geom_point(aes(color = Sample.type), size = 2, position = position_jitterdodge())+
-  scale_x_discrete(labels = c("gut","tegument","endo"))+
-  labs(x = "Sample type", y = "No. of ASVs")+
+  scale_x_discrete(labels = c("gut","wash","body"))+
+  labs(x = "Sample type", y = "Richness (no. of ASVs)")+
   theme_bw()+
   theme(text = element_text(color = "black", size = 7), rect = element_rect(size = 0.5),
         line = element_line(size = 0.5),
         axis.text = element_text(size = 6, colour = "black"),
         legend.position = "none", strip.text = element_text(face = "bold"))
-ggsave("figures/Supp_fig_alpha_diversity.png", units = "in", dpi = 600, width = 6.5, height = 2.5)
+#ggsave("figures/Supp_fig_alpha_diversity.png", units = "in", dpi = 600, width = 6.5, height = 2.5)
 
 summary(lm(Richness ~ Cestode.index, alpha.asv, subset = Sample.type=="salmon_gut"))
 "Residual standard error: 7.733 on 26 degrees of freedom
 Multiple R-squared:  0.06923,	Adjusted R-squared:  -0.03817 
 F-statistic: 0.6446 on 3 and 26 DF,  p-value: 0.5933"
 
+summary(lm(Richness ~ Cestode.index + Reads.sequenced.sum, alpha.asv, subset = Sample.type=="salmon_gut"))
+"Residual standard error: 7.328 on 25 degrees of freedom
+Multiple R-squared:  0.1962,	Adjusted R-squared:  0.06758 
+F-statistic: 1.525 on 4 and 25 DF,  p-value: 0.2252"
+
 summary(lm(Richness ~ Sample.type, alpha.asv))
 "Residual standard error: 5.883 on 64 degrees of freedom
 Multiple R-squared:   0.17,	Adjusted R-squared:  0.1441 
 F-statistic: 6.555 on 2 and 64 DF,  p-value: 0.002573"
+
+summary(lm(Richness ~ Sample.type + Reads.sequenced.sum, alpha.asv))
+"Residual standard error: 5.736 on 63 degrees of freedom
+Multiple R-squared:  0.2233,	Adjusted R-squared:  0.1863 
+F-statistic: 6.036 on 3 and 63 DF,  p-value: 0.001113"
+
+## Alpha diversity using Hill's numbers framework
+alpha.asv.hill <- data.frame(SampleID=row.names(otu_table(psm.relab)),
+                             Hill.q1=hill_taxa(otu_table(psm.relab), q = 1),
+                             Hill.q2=hill_taxa(otu_table(psm.relab), q = 2))
+alpha.asv <- merge(alpha.asv, alpha.asv.hill, by = "SampleID")
+p.alpha2 <-
+ggplot(alpha.asv, aes(Sample.type,Hill.q1))+
+  facet_grid(~Cestode.index)+
+  geom_boxplot(outlier.color = NA)+
+  geom_point(aes(color = Sample.type), size = 2, position = position_jitterdodge())+
+  scale_x_discrete(labels = c("gut","wash","body"))+
+  labs(x = "Sample type", y = "Shannon diversity")+
+  theme_bw()+
+  theme(text = element_text(color = "black", size = 7), rect = element_rect(size = 0.5),
+        line = element_line(size = 0.5),
+        axis.text = element_text(size = 6, colour = "black"),
+        legend.position = "none", strip.text = element_text(face = "bold"))
+#ggsave("figures/Supp_fig_alpha_diversity_Hills_Shannon.png", units = "in", dpi = 600, width = 6.5, height = 2.5)
+
+plot_grid(p.alpha1, p.alpha2, align = "hv", axis = "tblr", nrow = 2, labels = c("a","b"))
+if(!file.exists("figures/Supp_fig_alpha_diversity_both.png")){
+  ggsave("figures/Supp_fig_alpha_diversity_both.png", units = "in", dpi = 600, width = 6.5, height = 5)
+}
+
+ggplot(alpha.asv, aes(Sample.type,Hill.q1))+
+  geom_boxplot(outlier.color = NA)+
+  geom_point(aes(color = Sample.type), size = 2, position = position_jitterdodge())+
+  theme_bw()+
+  theme(text = element_text(color = "black", size = 7), rect = element_rect(size = 0.5),
+        line = element_line(size = 0.5),
+        axis.text = element_text(size = 6, colour = "black"),
+        legend.position = "none", strip.text = element_text(face = "bold"))
+
+summary(lm(Hill.q1 ~ Cestode.index, alpha.asv, subset = Sample.type=="salmon_gut"))
+"Residual standard error: 3.137 on 26 degrees of freedom
+Multiple R-squared:  0.08566,	Adjusted R-squared:  -0.01984 
+F-statistic: 0.8119 on 3 and 26 DF,  p-value: 0.4988"
+
+summary(lm(Hill.q1 ~ Cestode.index + Reads.sequenced.sum, alpha.asv, subset = Sample.type=="salmon_gut"))
+"Residual standard error: 3.121 on 25 degrees of freedom
+Multiple R-squared:  0.1298,	Adjusted R-squared:  -0.009477 
+F-statistic: 0.9319 on 4 and 25 DF,  p-value: 0.4614"
+
+summary(lm(Hill.q1 ~ Sample.type, alpha.asv))
+"Residual standard error: 2.352 on 64 degrees of freedom
+Multiple R-squared:  0.06119,	Adjusted R-squared:  0.03185 
+F-statistic: 2.086 on 2 and 64 DF,  p-value: 0.1326"
+# cestode body significantly lower than gut, whereas cestode wash not
+
+summary(lm(Hill.q1 ~ Sample.type + Reads.sequenced.sum, alpha.asv))
+"Residual standard error: 2.364 on 63 degrees of freedom
+Multiple R-squared:  0.06638,	Adjusted R-squared:  0.02192 
+F-statistic: 1.493 on 3 and 63 DF,  p-value: 0.225"
+# ok, tendancy now only "weak" evidence for cestode body to be lower in diversity than gut (p=0.06)
 
 #### Fig 2 & 3: Mycoplasma clades based on 16S tree ####
 myco.salmon <- c("seq91","seq2","seq3","seq124","seq64","seq131","seq170","seq817","seq26","seq156")
@@ -822,22 +993,24 @@ myco.df.m <- melt(myco.df, id.vars = c("SampleID","Total"), measure.vars = c(2:4
 myco.df.m$relab <- myco.df.m$count / myco.df.m$Total
 myco.df.m <- merge(myco.df.m, meta.merged, by = "SampleID", all.x = T, all.y = F)
 
-pdf("figures/Fig3_mycoplasma_clade_by_sample_type.pdf", 
-    width = 6.5, height = 2.5, colormodel = "srgb", paper = "a4r")
-ggplot(myco.df.m[grep("Myco",myco.df.m$Myco_clade),], aes(Sample.type, relab))+
-  facet_wrap(~Myco_clade, nrow = 1,
-             labeller=labeller(Myco_clade = c(Myco_Salmon="Salmon clade", Myco_Cestode1="Cestode clade 1", Myco_Cestode2="Cestode clade 2")))+
-  geom_line(aes(group = Fish.ID, color = Cestode.index, linetype = as.factor(Samples.per.fish)))+
-  geom_point(aes(color = Cestode.index), size = 2)+
-  scale_x_discrete(labels = c("gut","tegument","endo"))+
-  scale_linetype_manual(values = c(0,3,1))+
-  labs(x="Sample type", y="Proportion of 16S reads", color = "Cestode index", linetype = "Samples per fish")+
-  theme_bw()+
-  theme(text = element_text(color = "black", size = 7), rect = element_rect(size = 0.5),
-        line = element_line(size = 0.5),
-        axis.text = element_text(size = 6, colour = "black"),
-        legend.position = "right", strip.text = element_text(face = "bold"))
-dev.off()
+if(!file.exists("figures/Fig3_mycoplasma_clade_by_sample_type.pdf")){
+  pdf("figures/Fig3_mycoplasma_clade_by_sample_type.pdf", 
+      width = 6.5, height = 2.5, colormodel = "srgb", paper = "a4r")
+  ggplot(myco.df.m[grep("Myco",myco.df.m$Myco_clade),], aes(Sample.type, relab))+
+    facet_wrap(~Myco_clade, nrow = 1,
+               labeller=labeller(Myco_clade = c(Myco_Salmon="Salmon clade", Myco_Cestode1="Cestode clade 1", Myco_Cestode2="Cestode clade 2")))+
+    geom_line(aes(group = Fish.ID, color = Cestode.index, linetype = as.factor(Samples.per.fish)))+
+    geom_point(aes(color = Cestode.index), size = 2)+
+    scale_x_discrete(labels = c("salmon\ngut","cestode\nwash","cestode\nbody"))+
+    scale_linetype_manual(values = c(0,3,1))+
+    labs(x="Sample type", y="Proportion of 16S reads", color = "Cestode index", linetype = "Samples per fish")+
+    theme_bw()+
+    theme(text = element_text(color = "black", size = 7), rect = element_rect(size = 0.5),
+          line = element_line(size = 0.5),
+          axis.text = element_text(size = 6, colour = "black"),
+          legend.position = "right", strip.text = element_text(face = "bold"))
+  dev.off()
+}
 
 
 myco.tree.order <- read.delim("data/mycoplasma_16S_tree_ASV_tip_order.txt", header = F)
@@ -849,29 +1022,32 @@ dfm.myco.relab[which(dfm.myco.relab$proportion == 0),"proportion"] <- NA
 dfm.myco.relab$ASV.ID <- factor(dfm.myco.relab$ASV.ID, levels = rev(myco.tree.order))
 dfm.myco.relab$SampleID <- factor(dfm.myco.relab$SampleID, levels = myco.tree.samples)
 
-pdf("figures/Fig2b_mycoplasma_abundance_presence.pdf",
-    width = 10, height = 6, colormodel = "srgb", paper = "a4r")
-ggplot(dfm.myco.relab, aes(SampleID, ASV.ID))+
-  geom_point(aes(color = Sample.type, size = proportion), alpha = 0.75)+
-  geom_hline(yintercept = 9.5, color = "grey50", linetype = 2)+
-  geom_hline(yintercept = 19.5, color = "grey50", linetype = 2)+
-  labs(x = "", y = "")+
-  theme_classic()+
-  theme(text = element_text(color = "black", size = 7), rect = element_rect(size = 0.5),
-        line = element_line(size = 0.5),
-        axis.text = element_text(size = 6, colour = "black"),
-        legend.position = "right", axis.text.x = element_blank())
-dev.off()
+if(!file.exists("figures/Fig2b_mycoplasma_abundance_presence.pdf")){
+  pdf("figures/Fig2b_mycoplasma_abundance_presence.pdf",
+      width = 10, height = 6, colormodel = "srgb", paper = "a4r")
+  ggplot(dfm.myco.relab, aes(SampleID, ASV.ID))+
+    geom_point(aes(color = Sample.type, size = proportion), alpha = 0.75)+
+    geom_hline(yintercept = 9.5, color = "grey50", linetype = 2)+
+    geom_hline(yintercept = 19.5, color = "grey50", linetype = 2)+
+    labs(x = "", y = "")+
+    theme_classic()+
+    theme(text = element_text(color = "black", size = 7), rect = element_rect(size = 0.5),
+          line = element_line(size = 0.5),
+          axis.text = element_text(size = 6, colour = "black"),
+          legend.position = "right", axis.text.x = element_blank())
+  dev.off()
+}
+
 
 #### Size/weight vs Cestode index ####
 ## HoloFish entire cohort
 # Cestode distribution by feed type
 holofish.cestode.distrib <- as.data.frame(prop.table(table(meta.holofish[,c("Feed.Type","Cestode.index")]), margin = 1))
 holofish.cestode.distrib$y_pos <- NA
-holofish.cestode.distrib[holofish.cestode.distrib$Feed.Type == "BioMar","y_pos"] <- 
-  cumsum(rev(holofish.cestode.distrib[holofish.cestode.distrib$Feed.Type == "BioMar","Freq"]))
-holofish.cestode.distrib[holofish.cestode.distrib$Feed.Type == "EWOS","y_pos"] <- 
-  cumsum(rev(holofish.cestode.distrib[holofish.cestode.distrib$Feed.Type == "EWOS","Freq"]))
+holofish.cestode.distrib[holofish.cestode.distrib$Feed.Type == "Feed1","y_pos"] <- 
+  cumsum(rev(holofish.cestode.distrib[holofish.cestode.distrib$Feed.Type == "Feed1","Freq"]))
+holofish.cestode.distrib[holofish.cestode.distrib$Feed.Type == "Feed2","y_pos"] <- 
+  cumsum(rev(holofish.cestode.distrib[holofish.cestode.distrib$Feed.Type == "Feed2","Freq"]))
 holofish.cestode.distrib$Freq.2 <- round(holofish.cestode.distrib$Freq, digits = 3)
 
 ggplot(holofish.cestode.distrib, aes(Feed.Type, Freq, fill = Cestode.index))+
@@ -882,7 +1058,10 @@ ggplot(holofish.cestode.distrib, aes(Feed.Type, Freq, fill = Cestode.index))+
   theme(text = element_text(color = "black", size = 7), rect = element_rect(size = 0.5),
         line = element_line(size = 0.5), axis.text = element_text(size = 6, colour = "black"),
         legend.position = "right")
-ggsave("figures/Supp_fig_cestode_index_vs_feedtype.png", units = "in", dpi = 600,  width = 3, height = 3)
+if(!file.exists("figures/Supp_fig_cestode_index_vs_feedtype.png")){
+  ggsave("figures/Supp_fig_cestode_index_vs_feedtype.png", units = "in", dpi = 600,  width = 3, height = 3)
+}
+
 
 # stats
 table(meta.holofish$Cestode.present)
@@ -922,8 +1101,8 @@ Size.class     FALSE      TRUE
 table(meta.ind[,c("Feed.Type","Cestode.present")])
 "         Cestode.present
 Feed.Type FALSE TRUE
-   BioMar     5   10
-   EWOS       4   11"
+    Feed1     5   10
+    Feed2     4   11"
 table(meta.ind[,c("Sex","Cestode.present")])
 "   Cestode.present
 Sex FALSE TRUE
@@ -959,9 +1138,66 @@ sfig.kg.b <- ggplot(meta.ind, aes(Cestode.index, Gutted.Weight.kg))+
         line = element_line(size = 0.5), axis.text = element_text(size = 12, colour = "black"),
         legend.position = "none")
 
-png("figures/Supp_fig_cestode_index_vs_weight.png", units = "in", width = 8, height = 4, res = 600)
-plot_grid(sfig.kg.a, sfig.kg.b, align = "hv", axis = "tblr", labels = c("a","b"), nrow = 1)
-dev.off()
+if(!file.exists("figures/Supp_fig_cestode_index_vs_weight.png")){
+  png("figures/Supp_fig_cestode_index_vs_weight.png", units = "in", width = 8, height = 4, res = 600)
+  plot_grid(sfig.kg.a, sfig.kg.b, align = "hv", axis = "tblr", labels = c("a","b"), nrow = 1)
+  dev.off()
+}
+
+### MAG functional comparison ####
+gene.clusters <- read.delim("data/mycoplasma_MAG_gene_clusters.txt")
+
+gene.clusters$annotated <- sapply(seq(1,nrow(gene.clusters),1), function(i){
+  k <- gene.clusters[i,"KOfam"] == ""
+  c <- gene.clusters[i,"COG20_FUNCTION_ACC"] == ""
+  p <- gene.clusters[i,"Pfam"] == ""
+  if(k & c & p){
+    #all blank
+    FALSE
+  } else {
+    TRUE
+  }
+})
+
+gc.id.lists <- list(
+  Ml = unique(gene.clusters[which(gene.clusters$genome_name == "Candidatus_Mycoplasma_lavaretus"),"gene_cluster_id"]),
+  Msm = unique(gene.clusters[which(gene.clusters$genome_name == "Candidatus_Mycoplasma_salmoninae_mykiss"),"gene_cluster_id"]),
+  Mss = unique(gene.clusters[which(gene.clusters$genome_name == "Candidatus_Mycoplasma_salmoninae_salar"),"gene_cluster_id"]),
+  M_iowae = unique(gene.clusters[which(gene.clusters$genome_name == "Mycoplasma_iowae"),"gene_cluster_id"]),
+  M_penetrans = unique(gene.clusters[which(gene.clusters$genome_name == "Mycoplasma_penetrans"),"gene_cluster_id"]),
+  M_mobile = unique(gene.clusters[which(gene.clusters$genome_name == "Mycoplasma_mobile"),"gene_cluster_id"]),
+  CE_seq1 = unique(gene.clusters[which(gene.clusters$genome_name == "CE_seq1"),"gene_cluster_id"]),
+  CE_seq7 = unique(gene.clusters[which(gene.clusters$genome_name == "CE_seq7"),"gene_cluster_id"]),
+  CE_seq10 = unique(gene.clusters[which(gene.clusters$genome_name == "CE_seq10"),"gene_cluster_id"]),
+  U_diversum = unique(gene.clusters[which(gene.clusters$genome_name == "Ureaplasma_diversum"),"gene_cluster_id"]),
+  U_urealyticum = unique(gene.clusters[which(gene.clusters$genome_name == "Ureaplasma_urealyticum"),"gene_cluster_id"])
+)
+
+
+### diff versions
+ggVennDiagram(gc.id.lists[c("CE_seq7","CE_seq1","Mss","Msm","Ml")], 
+              category.names = c("CE_seq7","CE_seq1","Ms. salar","Ms. mykiss", "M. lavaretus"),
+              label = "count", label_alpha = 0)+
+  scale_fill_gradient(low = NA, high = NA)+
+  scale_color_manual(values = c("#BC93FF","#A4EEDE","#FFCDAB","#FFE6D5","#E5D5FF"))+
+  theme(legend.position = "none")
+if(!file.exists("figures/Supp_fig_Venn_MAg_geneclusters.png")){
+  ggsave("figures/Supp_fig_Venn_MAG_geneclusters.png", units = "in", dpi = 600, width = 6.5, height = 6)
+}
+
+ggVennDiagram(gc.id.lists[c("CE_seq7","CE_seq1","Mss","Msm","Ml")], 
+              category.names = c("CE_seq7","CE_seq1","Ms. salar","Ms. mykiss", "M. lavaretus"),
+              label = "count", label_alpha = 0)+
+  scale_fill_gradient(low = NA, high = NA)+
+  scale_color_manual(values = rep("black",5))+
+  theme(legend.position = "none")
+if(!file.exists("figures/Supp_fig_Venn_MAG_geneclusters_v2.png")){
+  ggsave("figures/Supp_fig_Venn_MAG_geneclusters_v2.png", units = "in", dpi = 600, width = 6.5, height = 6)
+}
+
+table(gene.clusters[,c("genome_name","annotated")])
+prop.table(table(gene.clusters[,c("genome_name","annotated")]), margin = 1)
+
 
 #### END ####
 

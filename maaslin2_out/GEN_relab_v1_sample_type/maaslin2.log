@@ -1,57 +1,61 @@
-2021-07-08 15:00:04 INFO::Writing function arguments to log file
-2021-07-08 15:00:04 DEBUG::Function arguments
-2021-07-08 15:00:04 DEBUG::Output folder: maaslin2_out/GEN_relab_v1_sample_type
-2021-07-08 15:00:04 DEBUG::Min Abundance: 0.000000
-2021-07-08 15:00:04 DEBUG::Min Prevalence: 0.100000
-2021-07-08 15:00:04 DEBUG::Normalization: NONE
-2021-07-08 15:00:04 DEBUG::Transform: NONE
-2021-07-08 15:00:04 DEBUG::Analysis method: LM
-2021-07-08 15:00:04 DEBUG::Max significance: 0.250000
-2021-07-08 15:00:04 DEBUG::Random effects: Fish.ID,Sampling.Date
-2021-07-08 15:00:04 DEBUG::Fixed effects: Sample.type
-2021-07-08 15:00:04 DEBUG::Correction method: BH
-2021-07-08 15:00:04 DEBUG::Standardize: TRUE
-2021-07-08 15:00:04 DEBUG::Cores: 1
-2021-07-08 15:00:04 INFO::Verifying options selected are valid
-2021-07-08 15:00:04 INFO::Determining format of input files
-2021-07-08 15:00:04 INFO::Input format is data samples as rows and metadata samples as rows
-2021-07-08 15:00:04 DEBUG::A total of 51 samples were found in both the data and metadata
-2021-07-08 15:00:04 DEBUG::Reordering data/metadata to use same sample ordering
-2021-07-08 15:00:04 INFO::Formula for random effects: expr ~ (1 | Fish.ID) + (1 | Sampling.Date)
-2021-07-08 15:00:04 INFO::Formula for fixed effects: expr ~  Sample.type
-2021-07-08 15:00:04 INFO::Running selected normalization method: NONE
-2021-07-08 15:00:04 INFO::Filter data based on min abundance and min prevalence
-2021-07-08 15:00:04 INFO::Total samples in data: 51
-2021-07-08 15:00:04 INFO::Min samples required with min abundance for a feature not to be filtered: 5.100000
-2021-07-08 15:00:04 INFO::Total filtered features: 23
-2021-07-08 15:00:04 INFO::Filtered feature names: Psychromonas, Enhydrobacter, Lawsonella, Streptococcus, Lactococcus, Anaerococcus, Jeotgalicoccus, Psychrobacter, Bradyrhizobium, Sphingobium, Tateyamaria, Geobacillus, Staphylococcus, Corynebacterium, Pantoea, Peptostreptococcus, Prevotella, Acidovorax, Rhodococcus, Weissella, Caproiciproducens, Tepidimicrobium, Pseudoalteromonas
-2021-07-08 15:00:04 INFO::Applying z-score to standardize continuous metadata
-2021-07-08 15:00:04 INFO::Running selected transform method: NONE
-2021-07-08 15:00:04 INFO::Running selected analysis method: LM
-2021-07-08 15:00:04 INFO::Fitting model to feature number 1, Mycoplasma
-2021-07-08 15:00:04 INFO::Fitting model to feature number 2, Carnobacterium
-2021-07-08 15:00:04 INFO::Fitting model to feature number 3, Photobacterium
-2021-07-08 15:00:04 INFO::Fitting model to feature number 4, Aliivibrio
-2021-07-08 15:00:04 INFO::Fitting model to feature number 5, Mycoplasmataceae_sp
-2021-07-08 15:00:04 INFO::Fitting model to feature number 6, Lactobacillus
-2021-07-08 15:00:05 INFO::Fitting model to feature number 7, Brevinema
-2021-07-08 15:00:05 INFO::Fitting model to feature number 8, Ureaplasma
-2021-07-08 15:00:05 INFO::Counting total values for each feature
-2021-07-08 15:00:05 INFO::Writing residuals to file maaslin2_out/GEN_relab_v1_sample_type/residuals.rds
-2021-07-08 15:00:05 INFO::Writing all results to file (ordered by increasing q-values): maaslin2_out/GEN_relab_v1_sample_type/all_results.tsv
-2021-07-08 15:00:05 INFO::Writing the significant results (those which are less than or equal to the threshold of 0.250000 ) to file (ordered by increasing q-values): maaslin2_out/GEN_relab_v1_sample_type/significant_results.tsv
-2021-07-08 15:00:05 INFO::Writing heatmap of significant results to file: maaslin2_out/GEN_relab_v1_sample_type/heatmap.pdf
-2021-07-08 15:00:05 INFO::Writing association plots (one for each significant association) to output folder: maaslin2_out/GEN_relab_v1_sample_type
-2021-07-08 15:00:05 INFO::Plotting associations from most to least significant, grouped by metadata
-2021-07-08 15:00:05 INFO::Plotting data for metadata number 1, Sample.type
-2021-07-08 15:00:05 INFO::Creating boxplot for categorical data, Sample.type vs Photobacterium
-2021-07-08 15:00:05 INFO::Creating boxplot for categorical data, Sample.type vs Carnobacterium
-2021-07-08 15:00:05 INFO::Creating boxplot for categorical data, Sample.type vs Ureaplasma
-2021-07-08 15:00:05 INFO::Creating boxplot for categorical data, Sample.type vs Mycoplasmataceae_sp
-2021-07-08 15:00:05 INFO::Creating boxplot for categorical data, Sample.type vs Mycoplasma
-2021-07-08 15:00:05 INFO::Creating boxplot for categorical data, Sample.type vs Brevinema
-2021-07-08 15:00:06 INFO::Creating boxplot for categorical data, Sample.type vs Photobacterium
-2021-07-08 15:00:06 INFO::Creating boxplot for categorical data, Sample.type vs Aliivibrio
-2021-07-08 15:00:06 INFO::Creating boxplot for categorical data, Sample.type vs Aliivibrio
-2021-07-08 15:00:06 INFO::Creating boxplot for categorical data, Sample.type vs Lactobacillus
-2021-07-08 15:00:06 INFO::Creating boxplot for categorical data, Sample.type vs Brevinema
+2022-02-14 14:56:17 INFO::Writing function arguments to log file
+2022-02-14 14:56:17 DEBUG::Function arguments
+2022-02-14 14:56:17 DEBUG::Output folder: maaslin2_out/GEN_relab_v1_sample_type
+2022-02-14 14:56:17 DEBUG::Min Abundance: 0.000000
+2022-02-14 14:56:17 DEBUG::Min Prevalence: 0.100000
+2022-02-14 14:56:17 DEBUG::Normalization: NONE
+2022-02-14 14:56:17 DEBUG::Transform: NONE
+2022-02-14 14:56:17 DEBUG::Analysis method: LM
+2022-02-14 14:56:17 DEBUG::Max significance: 0.250000
+2022-02-14 14:56:17 DEBUG::Random effects: Fish.ID,Sampling.Date
+2022-02-14 14:56:17 DEBUG::Fixed effects: Sample.type
+2022-02-14 14:56:17 DEBUG::Correction method: BH
+2022-02-14 14:56:17 DEBUG::Standardize: TRUE
+2022-02-14 14:56:17 DEBUG::Cores: 1
+2022-02-14 14:56:17 INFO::Verifying options selected are valid
+2022-02-14 14:56:17 INFO::Determining format of input files
+2022-02-14 14:56:17 INFO::Input format is data samples as rows and metadata samples as rows
+2022-02-14 14:56:17 DEBUG::A total of 51 samples were found in both the data and metadata
+2022-02-14 14:56:17 DEBUG::Reordering data/metadata to use same sample ordering
+2022-02-14 14:56:17 INFO::Formula for random effects: expr ~ (1 | Fish.ID) + (1 | Sampling.Date)
+2022-02-14 14:56:17 INFO::Formula for fixed effects: expr ~  Sample.type
+2022-02-14 14:56:17 INFO::Filter data based on min abundance and min prevalence
+2022-02-14 14:56:17 INFO::Total samples in data: 51
+2022-02-14 14:56:17 INFO::Min samples required with min abundance for a feature not to be filtered: 5.100000
+2022-02-14 14:56:17 INFO::Total filtered features: 23
+2022-02-14 14:56:17 INFO::Filtered feature names from abundance and prevalence filtering: Psychromonas, Enhydrobacter, Lawsonella, Streptococcus, Lactococcus, Anaerococcus, Jeotgalicoccus, Psychrobacter, Bradyrhizobium, Sphingobium, Tateyamaria, Geobacillus, Staphylococcus, Corynebacterium, Pantoea, Peptostreptococcus, Prevotella, Acidovorax, Rhodococcus, Weissella, Caproiciproducens, Tepidimicrobium, Pseudoalteromonas
+2022-02-14 14:56:17 INFO::Total filtered features with variance filtering: 0
+2022-02-14 14:56:17 INFO::Filtered feature names from variance filtering:
+2022-02-14 14:56:17 INFO::Running selected normalization method: NONE
+2022-02-14 14:56:17 INFO::Applying z-score to standardize continuous metadata
+2022-02-14 14:56:17 INFO::Running selected transform method: NONE
+2022-02-14 14:56:17 INFO::Running selected analysis method: LM
+2022-02-14 14:56:18 INFO::Fitting model to feature number 1, Mycoplasma
+2022-02-14 14:56:18 INFO::Fitting model to feature number 2, Carnobacterium
+2022-02-14 14:56:18 INFO::Fitting model to feature number 3, Photobacterium
+2022-02-14 14:56:18 INFO::Fitting model to feature number 4, Aliivibrio
+2022-02-14 14:56:18 INFO::Fitting model to feature number 5, Mycoplasmataceae_sp
+2022-02-14 14:56:18 INFO::Fitting model to feature number 6, Lactobacillus
+2022-02-14 14:56:18 INFO::Fitting model to feature number 7, Brevinema
+2022-02-14 14:56:18 INFO::Fitting model to feature number 8, Ureaplasma
+2022-02-14 14:56:18 INFO::Counting total values for each feature
+2022-02-14 14:56:18 INFO::Writing residuals to file maaslin2_out/GEN_relab_v1_sample_type/residuals.rds
+2022-02-14 14:56:18 INFO::Writing fitted values to file maaslin2_out/GEN_relab_v1_sample_type/fitted.rds
+2022-02-14 14:56:18 INFO::Writing extracted random effects to file maaslin2_out/GEN_relab_v1_sample_type/ranef.rds
+2022-02-14 14:56:18 INFO::Writing all results to file (ordered by increasing q-values): maaslin2_out/GEN_relab_v1_sample_type/all_results.tsv
+2022-02-14 14:56:18 INFO::Writing the significant results (those which are less than or equal to the threshold of 0.250000 ) to file (ordered by increasing q-values): maaslin2_out/GEN_relab_v1_sample_type/significant_results.tsv
+2022-02-14 14:56:18 INFO::Writing heatmap of significant results to file: maaslin2_out/GEN_relab_v1_sample_type/heatmap.pdf
+2022-02-14 14:56:19 INFO::Writing association plots (one for each significant association) to output folder: maaslin2_out/GEN_relab_v1_sample_type
+2022-02-14 14:56:19 INFO::Plotting associations from most to least significant, grouped by metadata
+2022-02-14 14:56:19 INFO::Plotting data for metadata number 1, Sample.type
+2022-02-14 14:56:19 INFO::Creating boxplot for categorical data, Sample.type vs Photobacterium
+2022-02-14 14:56:19 INFO::Creating boxplot for categorical data, Sample.type vs Carnobacterium
+2022-02-14 14:56:19 INFO::Creating boxplot for categorical data, Sample.type vs Ureaplasma
+2022-02-14 14:56:19 INFO::Creating boxplot for categorical data, Sample.type vs Mycoplasmataceae_sp
+2022-02-14 14:56:19 INFO::Creating boxplot for categorical data, Sample.type vs Mycoplasma
+2022-02-14 14:56:19 INFO::Creating boxplot for categorical data, Sample.type vs Brevinema
+2022-02-14 14:56:19 INFO::Creating boxplot for categorical data, Sample.type vs Photobacterium
+2022-02-14 14:56:19 INFO::Creating boxplot for categorical data, Sample.type vs Aliivibrio
+2022-02-14 14:56:20 INFO::Creating boxplot for categorical data, Sample.type vs Aliivibrio
+2022-02-14 14:56:20 INFO::Creating boxplot for categorical data, Sample.type vs Lactobacillus
+2022-02-14 14:56:20 INFO::Creating boxplot for categorical data, Sample.type vs Brevinema
