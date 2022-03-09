@@ -1,5 +1,5 @@
 # Microbiome profiling of cestode infection of Atlantic salmon
-Code used for processing and analysis for Brealey et al. 2021. Microbiome inception: an intestinal cestode shapes a hierarchical landscape of distinct microbial communities nested within the host.
+Code used for processing and analysis for Brealey et al. 2022. Microbiome inception: an intestinal cestode shapes a hierarchical landscape of microbial communities nested within the host.
 
 data: ASV count data, individual and sample metadata and MAG gene cluster data.
 
