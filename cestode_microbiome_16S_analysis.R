@@ -187,8 +187,8 @@ ggplot(melt(mock.comp, id.vars = "SampleID.R", measure.vars = c(2:ncol(mock.comp
   theme_classic()+
   theme(axis.text = element_text(size = 11, colour = "black"), axis.title = element_text(size = 12),
         legend.text = element_text(size = 11, colour = "black"), legend.title = element_text(size = 12))
-if(!file.exists("figures/Supp_fig_mock_composition.png")){
-  ggsave("figures/Supp_fig_mock_composition.png", units = "in", dpi = 600, width = 9.5, height = 4.5)
+if(!file.exists("figures/Supp_additional_fig_mock_composition.png")){
+  ggsave("figures/Supp_additional_fig_mock_composition.png", units = "in", dpi = 600, width = 9.5, height = 4.5)
 }
 
 #### QC: PCR false positives identification ####
@@ -292,8 +292,8 @@ ggplot(meta[which(!meta$Lab.control),], aes(Sample.type, Reads.postprocessing, c
   theme_classic()+
   theme(axis.text = element_text(size = 12, colour = "black"), axis.title = element_text(size = 13),
         legend.position = "right")
-if(!file.exists("figures/Supp_fig_readsPOSTprocessing.png")){
-  ggsave("figures/Supp_fig_readsPOSTprocessing.png", units = "in", dpi = 600, width = 6, height = 4)
+if(!file.exists("figures/Supp_additional_fig_readsPOSTprocessing.png")){
+  ggsave("figures/Supp_additional_fig_readsPOSTprocessing.png", units = "in", dpi = 600, width = 6, height = 4)
 }
 
 
@@ -320,9 +320,9 @@ table(asv.final$ASV_status)
 asv.final <- merge(asv.final, asv.seqs, by = "ASV.ID")
 
 # Supp table S3
-if(!file.exists("figures/Supp_table_ASV_counts_and_taxonomy.csv")){
+if(!file.exists("figures/Supp_additional_table_ASV_counts_and_taxonomy.csv")){
   # only write file if it doesn't exist
-  write.csv(asv.final, "figures/Supp_table_ASV_counts_and_taxonomy.csv",
+  write.csv(asv.final, "figures/Supp_additional_table_ASV_counts_and_taxonomy.csv",
             row.names = FALSE, quote = FALSE)
 }
 
@@ -383,8 +383,8 @@ plot_ordination(ps.clr, ord.reps, type="samples", axes=c(1,2), color="Sample.typ
   theme(panel.grid = element_blank(), legend.position = "right",
         axis.text = element_text(size = 12, colour = "black"), axis.title = element_text(size = 13),
         panel.border = element_rect(size = 1.2))
-if(!file.exists("figures/Supp_fig_NMDS_PCR_replicates.png")){
-  ggsave("figures/Supp_fig_NMDS_PCR_replicates.png", units = "in", dpi = 600, width = 5, height = 5)
+if(!file.exists("figures/Supp_additional_fig_NMDS_PCR_replicates.png")){
+  ggsave("figures/Supp_additional_fig_NMDS_PCR_replicates.png", units = "in", dpi = 600, width = 5, height = 5)
 }
 
 # fairly clear grouping by Sample.type type, with cestode wash between salmon gut & cestode body
@@ -427,8 +427,8 @@ ggplot(rcurve.all, aes(Reads, Richness, group = SampleID, color = Sample.type))+
         legend.position = "none")+
   facet_wrap(~Sample.type, nrow = 3,
              labeller=labeller(Sample.type = c(salmon_gut="Salmon gut", cestode_wash="Cestode wash", cestode_body="Cestode body")))
-if(!file.exists("figures/Supp_fig_accumulation_curve.png")){
-  ggsave("figures/Supp_fig_accumulation_curve.png", units = "in", dpi = 600, width = 6, height = 6)
+if(!file.exists("figures/Supp_additional_fig_accumulation_curve.png")){
+  ggsave("figures/Supp_additional_fig_accumulation_curve.png", units = "in", dpi = 600, width = 6, height = 6)
 }
 
 #### Ordinations ####
@@ -437,7 +437,7 @@ if(file.exists("data/ordination_sample_type_clr_nmds.rds")){
   ord.samples <- readRDS("data/ordination_sample_type_clr_nmds.rds")
 } else {
   ord.samples <- ordinate(psm.clr, method = "NMDS", distance = "euclidean", k = 3)
-  saveRDS(ord.reps, "data/ordination_sample_type_clr_nmds.rds")
+  saveRDS(ord.samples, "data/ordination_sample_type_clr_nmds.rds")
 }
 
 ord.samples$stress
@@ -511,15 +511,15 @@ if(file.exists("data/ordination_salmon_gut_clr_nmds.rds")){
   ord.gut <- readRDS("data/ordination_salmon_gut_clr_nmds.rds")
 } else {
   ord.gut <- ordinate(psm.gut.clr, method = "NMDS", distance = "euclidean", k = 2)
-  saveRDS(ord.reps, "data/ordination_salmon_gut_clr_nmds.rds")
+  saveRDS(ord.gut, "data/ordination_salmon_gut_clr_nmds.rds")
 }
 
 ord.gut$stress
-# 0.150463
+"0.1504631"
 
 # Supp figure: NMDS of salmon gut by cestode index
-if(!file.exists("figures/Supp_fig_NMDS_salmon_gut_by_cestode.png")){
-  png("figures/Supp_fig_NMDS_salmon_gut_by_cestode.png",  units = "in", width = 3.4, height = 3.4, res = 600)
+if(!file.exists("figures/Supp_FigS3_NMDS_salmon_gut_by_cestode.pdf")){
+  pdf("figures/Supp_FigS3_NMDS_salmon_gut_by_cestode.pdf", width = 3.4, height = 3.4)
   plot_ordination(psm.gut.clr, ord.gut, type="samples", axes=c(1,2), color="Cestode.index")+
     geom_point(size=1)+
     labs(color = "Cestode index")+
@@ -589,8 +589,8 @@ sample_data(psm.relab)$SampleType.CestodeBin <- sapply(sample_data(psm.relab)$Sa
 
 # colours: gut = "#F8766D", wash = "#00BA38", body = "#619CFF"; cestode = "#fcdf03", no cestode = "#530087"
 
-if(!file.exists("figures/Supp_fig_Venn_16Staxa.png")){
-  png("figures/Supp_fig_Venn_16Staxa.png", units = "in", res = 600, width = 6, height = 4)
+if(!file.exists("figures/Supp_FigS4c_Venn_16Staxa.png")){
+  png("figures/Supp_FigS4c_Venn_16Staxa.png", units = "in", res = 600, width = 6, height = 4)
   ps_venn(psm.relab, "SampleType.CestodeBin", weight = FALSE, fill = NA, col = c("#619CFF","#00BA38","#530087","#fcdf03"), lwd = 2,
           labels = list(labels=NA, font=1), legend = TRUE)
   dev.off()
@@ -756,7 +756,7 @@ maas.asv.relab.df$ASV.ID.of <- factor(
 )
 
 # Supp table of Maaslin2 results
-if(!file.exists("figures/Supp_table_maaslin2_results.csv")){
+if(!file.exists("figures/Supp_TableS1_maaslin2_results.csv")){
   maas.gen.relab.v1$model <- "Genus_m1"
   maas.gen.relab.v2b$model <- "Genus_m2"
   maas.gen.relab.v1$ASV_genus <- NA
@@ -771,13 +771,14 @@ if(!file.exists("figures/Supp_table_maaslin2_results.csv")){
     maas.gen.relab.v1[which(maas.gen.relab.v1$qval < 0.25),c(2,1,3:9,11,10)],
     maas.asv.relab.v1[which(maas.asv.relab.v1$qval < 0.25),c(2,1,3:11)]
   )
-  write.csv(maas.res, "figures/Supp_table_maaslin2_results.csv", row.names = F, quote = F)
+  write.csv(maas.res, "figures/Supp_TableS1_maaslin2_results.csv", row.names = F, quote = F)
 }
 
 
 #### Top ASV and genera plots ####
 
 # Supp Figure: Cestode index (ASV)
+p.bx.asv <-
 ggplot(maas.asv.relab.df[which(maas.asv.relab.df$ASV.ID %in% maas.asv.relab.cestode.sigseqs &
                                  maas.asv.relab.df$Sample.type == "salmon_gut"),],
        aes(Cestode.index, proportion))+
@@ -790,9 +791,6 @@ ggplot(maas.asv.relab.df[which(maas.asv.relab.df$ASV.ID %in% maas.asv.relab.cest
         line = element_line(size = 0.5),
         axis.text = element_text(size = 6, colour = "black"),
         legend.position = "none", strip.text = element_text(face = "bold"))
-if(!file.exists("figures/Supp_fig_cestode_ASV_boxplot.png")){
-  ggsave("figures/Supp_fig_cestode_ASV_boxplot.png", units = "in", dpi = 600, width = 6.5, height = 2.5)
-}
 
 
 # Supp Figure: Cestode index/present (genus)
@@ -834,10 +832,14 @@ p.bx.gen.2 <-
         axis.text = element_text(size = 6, colour = "black"),
         legend.position = "none", strip.text = element_text(face = "bold"))
 
-plot_grid(p.bx.gen.1, p.bx.gen.2, align = "h", axis = "tblr", 
-          nrow = 1, rel_widths = c(1,1.2), labels = c("a","b"))
-if(!file.exists("figures/Supp_fig_cestode_genus_boxplot.png")){
-  ggsave("figures/Supp_fig_cestode_genus_boxplot.png", units = "in", dpi = 600, width = 6.5, height = 2.5)
+# Supp Figure: Cestode index/presence (genus + ASV combined)
+p.bx.gen <- 
+  plot_grid(p.bx.gen.1, p.bx.gen.2, align = "h", axis = "tblr", 
+            nrow = 1, rel_widths = c(1,1.2), labels = c("a","b"))
+
+plot_grid(p.bx.gen, p.bx.asv, align = "hv", axis = "tblr", nrow = 2, labels = c("","c"), rel_heights = c(1,0.8))
+if(!file.exists("figures/Supp_FigS5_cestode_comb_genusASV_boxplot.pdf")){
+  ggsave("figures/Supp_FigS5_cestode_comb_genusASV_boxplot.pdf", width = 6.5, height = 6.5)
 }
 
 # Supp Figure: Sample type (genus + ASV combined)
@@ -873,8 +875,8 @@ maas.plot.st.p2 <-
         legend.position = "none", strip.text = element_text(face = "bold"))
 
 plot_grid(maas.plot.st.p1, maas.plot.st.p2, align = "hv", axis = "tblr", nrow = 2, rel_heights = c(0.75,1), labels = c("a","b"))
-if(!file.exists("figures/Supp_fig_sampletype_comb_genusASV_boxplot.png")){
-  ggsave("figures/Supp_fig_sampletype_comb_genusASV_boxplot.png", units = "in", dpi = 600, width = 10, height = 10)
+if(!file.exists("figures/Supp_FigS6_sampletype_comb_genusASV_boxplot.pdf")){
+  ggsave("figures/Supp_FigS6_sampletype_comb_genusASV_boxplot.pdf", units = "in", dpi = 600, width = 10, height = 10)
 }
 
 
@@ -899,7 +901,6 @@ ggplot(alpha.asv, aes(Sample.type,Richness))+ #
         line = element_line(size = 0.5),
         axis.text = element_text(size = 6, colour = "black"),
         legend.position = "none", strip.text = element_text(face = "bold"))
-#ggsave("figures/Supp_fig_alpha_diversity.png", units = "in", dpi = 600, width = 6.5, height = 2.5)
 
 summary(lm(Richness ~ Cestode.index, alpha.asv, subset = Sample.type=="salmon_gut"))
 "Residual standard error: 7.733 on 26 degrees of freedom
@@ -938,11 +939,10 @@ ggplot(alpha.asv, aes(Sample.type,Hill.q1))+
         line = element_line(size = 0.5),
         axis.text = element_text(size = 6, colour = "black"),
         legend.position = "none", strip.text = element_text(face = "bold"))
-#ggsave("figures/Supp_fig_alpha_diversity_Hills_Shannon.png", units = "in", dpi = 600, width = 6.5, height = 2.5)
 
 plot_grid(p.alpha1, p.alpha2, align = "hv", axis = "tblr", nrow = 2, labels = c("a","b"))
-if(!file.exists("figures/Supp_fig_alpha_diversity_both.png")){
-  ggsave("figures/Supp_fig_alpha_diversity_both.png", units = "in", dpi = 600, width = 6.5, height = 5)
+if(!file.exists("figures/Supp_FigS4ab_alpha_diversity_both.png")){
+  ggsave("figures/Supp_FigS4ab_alpha_diversity_both.png", units = "in", dpi = 600, width = 6.5, height = 5)
 }
 
 ggplot(alpha.asv, aes(Sample.type,Hill.q1))+
@@ -1058,8 +1058,8 @@ ggplot(holofish.cestode.distrib, aes(Feed.Type, Freq, fill = Cestode.index))+
   theme(text = element_text(color = "black", size = 7), rect = element_rect(size = 0.5),
         line = element_line(size = 0.5), axis.text = element_text(size = 6, colour = "black"),
         legend.position = "right")
-if(!file.exists("figures/Supp_fig_cestode_index_vs_feedtype.png")){
-  ggsave("figures/Supp_fig_cestode_index_vs_feedtype.png", units = "in", dpi = 600,  width = 3, height = 3)
+if(!file.exists("figures/Supp_FigS1_cestode_index_vs_feedtype.png")){
+  ggsave("figures/Supp_FigS1_cestode_index_vs_feedtype.png", units = "in", dpi = 600,  width = 3, height = 3)
 }
 
 
@@ -1138,8 +1138,8 @@ sfig.kg.b <- ggplot(meta.ind, aes(Cestode.index, Gutted.Weight.kg))+
         line = element_line(size = 0.5), axis.text = element_text(size = 12, colour = "black"),
         legend.position = "none")
 
-if(!file.exists("figures/Supp_fig_cestode_index_vs_weight.png")){
-  png("figures/Supp_fig_cestode_index_vs_weight.png", units = "in", width = 8, height = 4, res = 600)
+if(!file.exists("figures/Supp_FigS2_cestode_index_vs_weight.pdf")){
+  pdf("figures/Supp_FigS2_cestode_index_vs_weight.pdf", width = 8, height = 4)
   plot_grid(sfig.kg.a, sfig.kg.b, align = "hv", axis = "tblr", labels = c("a","b"), nrow = 1)
   dev.off()
 }
@@ -1181,9 +1181,6 @@ ggVennDiagram(gc.id.lists[c("CE_seq7","CE_seq1","Mss","Msm","Ml")],
   scale_fill_gradient(low = NA, high = NA)+
   scale_color_manual(values = c("#BC93FF","#A4EEDE","#FFCDAB","#FFE6D5","#E5D5FF"))+
   theme(legend.position = "none")
-if(!file.exists("figures/Supp_fig_Venn_MAg_geneclusters.png")){
-  ggsave("figures/Supp_fig_Venn_MAG_geneclusters.png", units = "in", dpi = 600, width = 6.5, height = 6)
-}
 
 ggVennDiagram(gc.id.lists[c("CE_seq7","CE_seq1","Mss","Msm","Ml")], 
               category.names = c("CE_seq7","CE_seq1","Ms. salar","Ms. mykiss", "M. lavaretus"),
@@ -1191,8 +1188,8 @@ ggVennDiagram(gc.id.lists[c("CE_seq7","CE_seq1","Mss","Msm","Ml")],
   scale_fill_gradient(low = NA, high = NA)+
   scale_color_manual(values = rep("black",5))+
   theme(legend.position = "none")
-if(!file.exists("figures/Supp_fig_Venn_MAG_geneclusters_v2.png")){
-  ggsave("figures/Supp_fig_Venn_MAG_geneclusters_v2.png", units = "in", dpi = 600, width = 6.5, height = 6)
+if(!file.exists("figures/Supp_FigS7a_Venn_MAG_geneclusters.png")){
+  ggsave("figures/Supp_FigS7a_Venn_MAG_geneclusters.png", units = "in", dpi = 600, width = 6.5, height = 6)
 }
 
 table(gene.clusters[,c("genome_name","annotated")])
