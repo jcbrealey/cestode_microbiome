@@ -10,4 +10,4 @@ maaslin2_out: output from Maaslin2 association tests.
 reference_sequence_accessions: SILVA and Genbank accessions of mycoplasma and cestode reference sequences (16S, 18S and whole genomes) used in the analyses.
 
 
-Raw sequencing data will be available from ENA soon/upon publication (project accession: PRJEBXXXXX).
+Raw sequencing data and binned metagenome assemblies are available at ENA  (project accession: PRJEB51496).
