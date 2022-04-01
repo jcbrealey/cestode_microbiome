@@ -1,0 +1,25 @@
+# MAG phylogenomic tree
+
+## ongoing ##
+
+# get sequences from pangenome:
+module load python/v3.6.9 htslib/v1.9 diamond/v0.9.14 hmmer/v3.2.1 prodigal/v2.6.3 samtools/v1.9 anvio/v6.2 hologenomics blast+/v2.8.1 muscle/v3.8.31 R/v4.0.2 mcl/v14.137
+
+cd TAPEWORM_MGX_201105/PAN4_anvioPHYLO_210126
+
+anvi-get-sequences-for-hmm-hits --external-genomes PAN1_anvioDB_201210/genomes_external_mycoplasma_201217.txt --internal-genomes PAN1_anvioDB_201210/genomes_internal_JCB_201217.txt -o PAN4_anvioPHYLO_210126/concatenated-proteins-all.fa --hmm-source Bacteria_71 --return-best-hit --get-aa-sequences --concatenate
+
+# convert fasta to phylip in python
+python
+>>> from Bio import SeqIO
+>>> records = SeqIO.parse("PAN4_anvioPHYLO_210126/concatenated-proteins-all.fa", "fasta")
+>>> count = SeqIO.write(records, "PAN4_anvioPHYLO_210126/concatenated-proteins-all.phylip", "phylip")
+>>> print("Converted %i records" % count)
+
+# run bootstrapped tree with RAxML
+
+module load RAxML/v8.2.11
+
+raxmlHPC-PTHREADS-SSE3 -T 10 -f a -m PROTGAMMAAUTO -p 1464 -x 654 -# 100 -s concatenated-proteins-all.phylip -n Myco210218.v1
+
+## output in Cdrive_work/Anvio_Cdrive/TAPEWORM_201123/PAN_210113_subset/raxml_tree_210218/RAxML_bipartitions.Myco210218.v1*

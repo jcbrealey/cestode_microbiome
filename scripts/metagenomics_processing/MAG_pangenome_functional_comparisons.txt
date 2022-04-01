@@ -1,0 +1,25 @@
+# MAG pangenome functional comparison
+
+## ongoing ##
+
+cd TAPEWORM_201123
+anvi-gen-genomes-storage -e PAN_210113_subset/genomes_external_mycoplasma_subset_210113.txt -i PAN_210113_subset/genomes_internal_mycoplasma_210113.txt -o PAN_210113_subset/Mycoplasma_sub-GENOMES.db
+
+anvi-pan-genome -g PAN_210113_subset/Mycoplasma_sub-GENOMES.db -n "Mycoplasma_sub" --output-dir PAN_210113_subset/PAN_output --use-ncbi-blast --mcl-inflation 2 --enforce-hierarchical-clustering
+
+mv PAN_210113_subset/PAN_output/Mycoplasma_sub-PAN.db PAN_210113_subset
+
+anvi-import-misc-data -p PAN_210113_subset/Mycoplasma_sub-PAN.db -t layers PAN_210111_subset/genome_metadata_210111.txt
+
+anvi-compute-genome-similarity -e PAN_210113_subset/genomes_external_mycoplasma_subset_210113.txt -i PAN_210113_subset/genomes_internal_mycoplasma_210113.txt -o PAN_210113_subset/ANI_210113 --program pyANI --pan-db PAN_210113_subset/Mycoplasma_sub-PAN.db
+
+anvi-summarize -p PAN_210113_subset/Mycoplasma_sub-PAN.db -g PAN_210113_subset/Mycoplasma_sub-GENOMES.db -C default -o PAN_210113_subset/Summary
+
+anvi-summarize -p PAN_210113_subset/Mycoplasma_sub-PAN.db -g PAN_210113_subset/Mycoplasma_sub-GENOMES.db -C temp -o PAN_210113_subset/Summary
+
+# Mycoplasma_sub_gene_clusters_summary.txt.gz = data/mycoplasma_MAG_gene_clusters.txt
+gunzip PAN_210113_subset/Summary/Mycoplasma_sub_gene_clusters_summary.txt.gz
+
+anvi-estimate-metabolism -i PAN_210113_subset/genomes_internal_mycoplasma_210113.txt --module-completion-threshold 0.5 -O PAN_210113_subset/kegg-myco-bins --matrix-format --include-metadata
+
+anvi-estimate-metabolism -e PAN_210113_subset/genomes_external_mycoplasma_subset_210113.txt --module-completion-threshold 0.5 -O PAN_210113_subset/kegg-myco-refs --matrix-format --include-metadata
